@@ -2,8 +2,28 @@
 setlocal enabledelayedexpansion
 
 echo Starting disk space check and restarting the computer...
-REM Log for clean
-echo %date% %time% - clean.bat is running >> C:\Users\pc\checkclean.log
+
+:: Lấy tên người dùng hiện tại từ biến môi trường USERNAME
+set "userDir=%USERNAME%"
+set "animeDir=C:\Users\%userDir%\Desktop\anime"
+
+echo Checking for user directory: !userDir!
+echo Anime directory path: !animeDir!
+
+:: Kiểm tra xem thư mục animeDir có tồn tại không
+if not exist "!animeDir!" (
+    echo Directory "!animeDir!" does not exist. Creating it...
+    mkdir "!animeDir!"
+)
+
+:: Log for clean in animeDir
+echo %date% %time% - clean.bat is running >> "!animeDir!\checkclean.log"
+
+if exist "!animeDir!" (
+    echo User directory "!userDir!" exists: "!animeDir!"
+) else (
+    echo User directory "!userDir!" does not exist or Desktop\anime not found. Skipping to next user...
+)
 
 REM Step 1: Check for administrative privileges
 net session >nul 2>&1
@@ -101,3 +121,4 @@ if errorlevel 1 (
 
 echo All operations completed successfully!
 exit /b 0
+exit
