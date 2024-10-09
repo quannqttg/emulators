@@ -21,7 +21,7 @@ for /f "tokens=2 delims=," %%i in ('tasklist /fi "imagename eq cmd.exe" /fo csv 
 echo Current CMD Process ID: !currentPID!
 
 REM Step 2: Check free space on C: drive using PowerShell
-for /f "usebackq delims=" %%a in (`powershell -command "Get-PSDrive C | Select-Object -ExpandProperty Free"`) do (
+for /f "usebackq delims=" %%a in (`powershell -command "(Get-PSDrive C).Free"`) do (
     set "freeSpace=%%a"
 )
 if "%freeSpace%"=="" (
