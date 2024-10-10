@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Lấy tên người dùng hiện tại và thiết lập đường dẫn cho thư mục anime và file log
+:: Set the current username and define paths for anime directory and log file
 set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
 set "logFile=%animeDir%\killmumu.log"
@@ -9,7 +9,7 @@ set "logFile=%animeDir%\killmumu.log"
 echo Starting disk space check and recloning process...
 echo %date% %time% - killmumu.bat is running >> "%logFile%"
 
-REM Kiểm tra quyền Admin
+REM Check for administrative privileges
 net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo Requesting administrative privileges... >> "%logFile%"
@@ -19,7 +19,7 @@ if %errorlevel% neq 0 (
     echo Admin privileges confirmed. >> "%logFile%"
 )
 
-REM Kiểm tra sự hiện diện của PowerShell
+REM Check for PowerShell presence
 where powershell >nul 2>&1
 if errorlevel 1 (
     echo PowerShell not found. Exiting... >> "%logFile%"
@@ -29,33 +29,34 @@ if errorlevel 1 (
 )
 
 :askConfirmation
-set /p confirm="Do you want to proceed with file deletion and related tasks? (y/n): "
+:: Ask for user confirmation to proceed with file deletion and related tasks
+set /p confirm="Do you want to proceed with file deletion and related tasks? (y/n/x): "
 if /i "%confirm%"=="y" goto proceed
-if /i "%confirm%"=="n" goto cancel
-echo Invalid input. Please enter 'y' for yes or 'n' for no.
+if /i "%confirm%"=="n" goto skipDelete
+if /i "%confirm%"=="x" (
+    echo User chose to exit. Exiting... >> "%logFile%"
+    exit /b 0
+)
+echo Invalid input. Please enter 'y', 'n', or 'x'.
 goto askConfirmation
 
 :proceed
-echo [DEBUG] User confirmed to proceed with the operation.
-echo User confirmed to proceed with the operation. >> "%logFile%"
+echo [DEBUG] Proceeding with file deletion and download... >> "%logFile%"
 
-:: Đếm ngược 10 giây
-for /l %%i in (10,-1,1) do (
-    echo [DEBUG] %%i seconds remaining...
-    timeout /t 1 >nul
-)
-
-:: Thực hiện xóa các thư mục và file
+:: Perform deletion of specific folders and files
 set "targetDir=C:\Program Files\Netease\MuMuPlayerGlobal-12.0\vms"
 if exist "!targetDir!" (
+    echo Deleting contents in "!targetDir!"... >> "%logFile%"
+    REM Loop through directories in the target directory
     for /d %%i in ("!targetDir!\*") do (
         if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-base" if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-0" (
-            echo Deleting folder %%i...
+            echo Deleting folder %%i... >> "%logFile%"
             rmdir /s /q "%%i"
         )
     )
+    REM Loop through files in the target directory
     for %%i in ("!targetDir!\*") do (
-        echo Deleting file %%i...
+        echo Deleting file %%i... >> "%logFile%"
         del /q "%%i"
     )
 ) else (
@@ -63,16 +64,32 @@ if exist "!targetDir!" (
     exit /b 1
 )
 
-:: Tải về file emulators.json từ GitHub
+:: Download emulators.json file from GitHub
 set "jsonSource=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
 set "jsonDest=%animeDir%\data\emulators.json"
+echo Downloading emulators.json from GitHub... >> "%logFile%"
 curl -L -o "!jsonDest!" "!jsonSource!"
 if errorlevel 1 (
     echo Failed to download emulators.json. Exiting... >> "%logFile%"
     exit /b 1
 )
 
-:: Chạy file autoRelaunch_mumu.bat
+goto delayAndRun
+
+:skipDelete
+echo Skipping deletion. Proceeding to delay and auto run... >> "%logFile%"
+goto delayAndRun
+
+:delayAndRun
+:: Add a 10-second countdown before running autoRelaunch_mumu.bat
+echo Waiting for 10 seconds before running autoRelaunch_mumu.bat... >> "%logFile%"
+for /L %%i in (10,-1,1) do (
+    echo Starting in %%i seconds...
+    timeout /t 1 >nul
+)
+echo Proceeding to run autoRelaunch_mumu.bat... >> "%logFile%"
+
+:: Navigate to the anime directory and run autoRelaunch_mumu.bat
 cd "%animeDir%" || exit /b 1
 if not exist "autoRelaunch_mumu.bat" (
     echo File autoRelaunch_mumu.bat does not exist. Exiting... >> "%logFile%"
@@ -82,11 +99,6 @@ echo Running autoRelaunch_mumu.bat... >> "%logFile%"
 call autoRelaunch_mumu.bat || exit /b 1
 echo All operations completed successfully! >> "%logFile%"
 goto end
-
-:cancel
-echo [DEBUG] User canceled the operation.
-echo User canceled the operation. >> "%logFile%"
-exit /b 0
 
 :end
 pause
