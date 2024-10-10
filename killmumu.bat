@@ -47,17 +47,24 @@ echo [DEBUG] Proceeding with file deletion and download... >> "%logFile%"
 set "targetDir=C:\Program Files\Netease\MuMuPlayerGlobal-12.0\vms"
 if exist "!targetDir!" (
     echo Deleting contents in "!targetDir!"... >> "%logFile%"
+    echo Deleting contents in "!targetDir!"...
+    
     REM Loop through directories in the target directory
     for /d %%i in ("!targetDir!\*") do (
         if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-base" if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-0" (
             echo Deleting folder %%i... >> "%logFile%"
+            echo Deleting folder %%i...
             rmdir /s /q "%%i"
+            echo Deleted folder %%i >> "%logFile%"
         )
     )
+    
     REM Loop through files in the target directory
     for %%i in ("!targetDir!\*") do (
         echo Deleting file %%i... >> "%logFile%"
+        echo Deleting file %%i...
         del /q "%%i"
+        echo Deleted file %%i >> "%logFile%"
     )
 ) else (
     echo Target directory does not exist. Exiting... >> "%logFile%"
@@ -67,12 +74,20 @@ if exist "!targetDir!" (
 :: Download emulators.json file from GitHub
 set "jsonSource=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
 set "jsonDest=%animeDir%\data\emulators.json"
+if not exist "%animeDir%\data" (
+    mkdir "%animeDir%\data" >> "%logFile%"
+    echo Created data directory. >> "%logFile%"
+)
+
 echo Downloading emulators.json from GitHub... >> "%logFile%"
+echo Downloading emulators.json from GitHub...
 curl -L -o "!jsonDest!" "!jsonSource!"
 if errorlevel 1 (
     echo Failed to download emulators.json. Exiting... >> "%logFile%"
     exit /b 1
 )
+echo Download completed successfully! >> "%logFile%"
+echo Download completed successfully!
 
 goto delayAndRun
 
@@ -83,11 +98,13 @@ goto delayAndRun
 :delayAndRun
 :: Add a 10-second countdown before running autoRelaunch_mumu.bat
 echo Waiting for 10 seconds before running autoRelaunch_mumu.bat... >> "%logFile%"
+echo Waiting for 10 seconds before running autoRelaunch_mumu.bat...
 for /L %%i in (10,-1,1) do (
     echo Starting in %%i seconds...
     timeout /t 1 >nul
 )
 echo Proceeding to run autoRelaunch_mumu.bat... >> "%logFile%"
+echo Proceeding to run autoRelaunch_mumu.bat...
 
 :: Navigate to the anime directory and run autoRelaunch_mumu.bat
 cd "%animeDir%" || exit /b 1
