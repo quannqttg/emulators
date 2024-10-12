@@ -183,7 +183,8 @@ if exist "!animeDir!" (
 :SkipToNext
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
-pause
 
 :: Check the status of the time service
 w32tm /query /status
+
+exit /b 0
