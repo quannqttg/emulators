@@ -43,5 +43,5 @@ w32tm /resync >nul 2>&1
 :: Set display resolution to 1920x1080 using NirCmd
 "C:\Users\%USERNAME%\Desktop\anime\nircmd.exe" setdisplay 1920 1080 32 >nul 2>&1
 
-:: End the script
+endlocal
 exit
