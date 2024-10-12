@@ -3,6 +3,8 @@ import time
 import os
 import subprocess
 import psutil
+import mss
+import pygetwindow as gw
 
 # Hàm tìm cửa sổ Chrome và giữ lại cửa sổ đầu tiên
 def keep_first_chrome_window():
@@ -17,8 +19,10 @@ def keep_first_chrome_window():
             if window.pid != first_chrome_pid:
                 window.terminate()  # Đóng cửa sổ Chrome không phải là cửa sổ đầu tiên
         print("Đã đóng các cửa sổ Chrome khác.")
+        return first_chrome_pid  # Trả về PID của cửa sổ Chrome đầu tiên
     else:
         print("Không tìm thấy cửa sổ Chrome nào.")
+        return None  # Trả về None nếu không có cửa sổ nào
 
 # Xác định tên người dùng
 username = os.getlogin()  # Lấy tên người dùng hiện tại
@@ -27,7 +31,7 @@ username = os.getlogin()  # Lấy tên người dùng hiện tại
 installer_path = f"C:\\Users\\{username}\\Desktop\\anime\\MuMuInstaller_3.1.7.0_gw-overseas12_all_1712735105.exe"
 
 # Giữ lại cửa sổ Chrome 1 và đóng các cửa sổ Chrome khác
-keep_first_chrome_window()
+first_chrome_pid = keep_first_chrome_window()
 
 # Chạy trình cài đặt MuMu Player
 pyautogui.hotkey("win", "r")
