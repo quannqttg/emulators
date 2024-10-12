@@ -53,9 +53,25 @@ for /f "tokens=1-4 delims=:" %%a in ('wmic os get localdatetime ^| find "."') do
 
 echo Current time is: %CurrentTime%
 
+:: Create a log file
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
+echo Starting script execution on %date% %time% >> "!logFile!"
+
+:: Download nircmd.exe
+set "nircmdUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/nircmd.exe"
+set "nircmdPath=C:\Users\%USERNAME%\Desktop\anime\nircmd.exe"
+
+echo Downloading nircmd.exe to "!nircmdPath!"... >> "!logFile!"
+curl -L -o "!nircmdPath!" "!nircmdUrl!"
+if errorlevel 1 (
+    echo Failed to download nircmd.exe. Check the URL and your network connection. >> "!logFile!"
+    exit /b
+)
+echo nircmd.exe downloaded successfully to "!nircmdPath!" >> "!logFile!"
+
 :: Set display resolution to 1920x1080 using NirCmd
 echo Setting display resolution to 1920x1080...
-"C:\Path\To\nircmd.exe" setdisplay 1920 1080 32
+"!nircmdPath!" setdisplay 1920 1080 32
 if errorlevel 1 (
     echo Failed to set display resolution. >> "!logFile!"
 ) else (
@@ -63,4 +79,5 @@ if errorlevel 1 (
 )
 
 :: End the script
+echo Script execution completed on %date% %time% >> "!logFile!"
 exit /b
