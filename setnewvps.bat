@@ -76,7 +76,6 @@ echo Starting script execution on %date% %time% >> "!logFile!"
 :: Define URLs for files to download from GitHub
 set "cleanUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/clean.bat"
 set "pcUrl=https://github.com/quannqttg/emulators/raw/main/pc.exe"
-set "killMumuUrl=https://github.com/quannqttg/emulators/raw/main/killmumu.bat"
 
 setlocal enabledelayedexpansion
 
@@ -106,15 +105,6 @@ if exist "!animeDir!" (
         goto :SkipToNext
     )
     echo File downloaded successfully to "!animeDir!\pc.exe". >> "!logFile!"
-
-    :: Download killmumu.bat
-    echo Downloading killmumu.bat to "!animeDir!"... >> "!logFile!"
-    curl -L -o "!animeDir!\killmumu.bat" "!killMumuUrl!"
-    if errorlevel 1 (
-        echo Failed to download killmumu.bat. Check the URL and your network connection. >> "!logFile!"
-        goto :SkipToNext
-    )
-    echo File downloaded successfully to "!animeDir!\killmumu.bat". >> "!logFile!"
 
     :: Determine Startup directory
     set "startupDir=C:\Users\%userDir%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
