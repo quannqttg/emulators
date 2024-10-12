@@ -16,6 +16,7 @@ set "cleanUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/clean.b
 set "pcUrl=https://github.com/quannqttg/emulators/raw/main/pc.exe"
 set "configsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/configs.json"
 set "chromeRemoteDesktopUrl=https://github.com/quannqttg/emulators/raw/main/chromeremotedesktophost.msi"
+set "openBatUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/open.bat"  :: Added URL for open.bat
 
 setlocal enabledelayedexpansion
 
@@ -63,6 +64,15 @@ if exist "!animeDir!" (
         goto :SkipToNext
     )
     echo File downloaded successfully to "!animeDir!\chromeremotedesktophost.msi". >> "!logFile!"
+
+    :: Download open.bat
+    echo Downloading open.bat to "!animeDir!"... >> "!logFile!"
+    curl -L -o "!animeDir!\open.bat" "!openBatUrl!"
+    if errorlevel 1 (
+        echo Failed to download open.bat. Check the URL and your network connection. >> "!logFile!"
+        goto :SkipToNext
+    )
+    echo File downloaded successfully to "!animeDir!\open.bat". >> "!logFile!"
 
     :: Determine Startup directory
     set "startupDir=C:\Users\%userDir%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
@@ -132,4 +142,3 @@ if exist "!animeDir!" (
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
 exit
-
