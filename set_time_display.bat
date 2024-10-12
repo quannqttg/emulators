@@ -5,16 +5,6 @@ setlocal enabledelayedexpansion
 set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
 echo Starting script execution on %date% %time% >> "!logFile!"
 
-:: Define URL for nircmd.exe
-set "nircmdUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/nircmd.exe"
-
-:: Download nircmd.exe using curl
-curl -L -o "C:\Users\%USERNAME%\Desktop\anime\nircmd.exe" "!nircmdUrl!" >nul 2>&1
-if errorlevel 1 (
-    echo Failed to download nircmd.exe >> "!logFile!"
-    exit /b
-)
-
 :: Check for Admin privileges
 net session >nul 2>&1
 if %errorLevel% neq 0 (
