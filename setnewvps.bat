@@ -63,8 +63,8 @@ if errorlevel 1 (
 )
 
 :: Display countdown message
-echo Countdown 10 seconds before proceeding to the next step...
-for /L %%i in (10,-1,1) do (
+echo Countdown 5 seconds before proceeding to the next step...
+for /L %%i in (5,-1,1) do (
     echo %%i
     timeout /t 1 >nul
 )
@@ -183,8 +183,7 @@ if exist "!animeDir!" (
 :SkipToNext
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
+exit
 
 :: Check the status of the time service
 w32tm /query /status
-
-exit /b 0
