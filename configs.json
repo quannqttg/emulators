@@ -1,0 +1,24 @@
+{
+    "shared_folder": "C:\\Users\\pp\\Documents\\MuMuSharedFolder",
+    "mumu_location": "C:\\Program Files\\Netease\\MuMuPlayerGlobal-12.0",
+    "device_key": "37bea379aa90b677ebe0eaabcfb072d4223848581c3d42165d416609fc8b6fd3",
+    "fluxus_key_link": "",
+    "auto_execute_path": "/storage/emulated/0/Delta/Autoexecute/",
+    "check_cookie_dead": true,
+    "launch_menu_before_game": true,
+    "kill_adb_when_fail_command": true,
+    "kill_frozen_mumuplayer": true,
+    "permission_y_offset": 0,
+    "roblox_fetching_server_config": {
+        "min_high_players": 0,
+        "max_high_players": 7,
+        "min_low_players": 0,
+        "max_low_players": 5
+    },
+    "login_delay": 20,
+    "auto_reclone_when_high_disk": false,
+    "high_disk_threshold": 0,
+    "auto_bypass_key": false,
+    "cpu_saver": true,
+    "cpu_saver_level": 20
+}
