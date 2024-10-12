@@ -63,4 +63,4 @@ if errorlevel 1 (
 )
 
 :: End the script
-exit /b
+exit
