@@ -55,7 +55,7 @@ echo Current time is: %CurrentTime%
 
 :: Set display resolution to 1920x1080 using NirCmd
 echo Setting display resolution to 1920x1080...
-nircmd.exe setdisplay 1920 1080 32
+"C:\Path\To\nircmd.exe" setdisplay 1920 1080 32
 if errorlevel 1 (
     echo Failed to set display resolution. >> "!logFile!"
 ) else (
@@ -63,4 +63,4 @@ if errorlevel 1 (
 )
 
 :: End the script
-exit
+exit /b
