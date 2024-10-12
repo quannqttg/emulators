@@ -44,4 +44,4 @@ w32tm /resync >nul 2>&1
 "C:\Users\%USERNAME%\Desktop\anime\nircmd.exe" setdisplay 1920 1080 32 >nul 2>&1
 
 :: End the script
-exit /b
+exit
