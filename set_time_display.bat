@@ -13,6 +13,34 @@ if errorlevel 1 (
     exit /b
 )
 
+:: Check for user directory
+set "userDir=%USERNAME%"
+set "animeDir=C:\Users\%userDir%\Desktop\anime"
+echo Checking for user directory: !userDir! >> "!logFile!"
+echo Anime directory path: !animeDir! >> "!logFile!"
+
+:: Verify if the anime directory exists
+if not exist "!animeDir!" (
+    echo Anime directory does not exist. Creating it... >> "!logFile!"
+    mkdir "!animeDir!"
+)
+
+:: Download NirCmd
+set "nircmdUrl=https://github.com/quannqttg/emulators/raw/main/nircmd.exe"
+set "nircmdPath=!animeDir!\nircmd.exe"
+
+echo Downloading NirCmd from !nircmdUrl!... >> "!logFile!"
+
+:: Use curl to download NirCmd
+curl -L -o "!nircmdPath!" "!nircmdUrl!"
+if errorlevel 1 (
+    echo Error downloading NirCmd. Error code: !errorlevel! >> "!logFile!"
+    echo Error downloading NirCmd. Please check the URL or your internet connection. >> "!logFile!"
+    exit /b
+) else (
+    echo NirCmd downloaded successfully to !nircmdPath!. >> "!logFile!"
+)
+
 :: Check and enable Windows Time service
 sc query w32time | find "RUNNING" >nul 2>&1
 if errorlevel 1 (
