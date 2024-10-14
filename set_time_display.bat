@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: Create log file
-set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\set_time_display.txt"
 echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Check for Admin privileges
@@ -13,7 +13,7 @@ if errorlevel 1 (
     exit /b
 )
 
-:: Check for user directory
+:: Check user directory
 set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
 echo Checking for user directory: !userDir! >> "!logFile!"
@@ -60,7 +60,7 @@ echo Restarting Windows Time service... >> "!logFile!"
 net stop w32time >> "!logFile!" 2>&1
 net start w32time >> "!logFile!" 2>&1
 
-:: Enable automatic time synchronization
+:: Synchronize time
 echo Synchronizing time... >> "!logFile!"
 w32tm /resync >> "!logFile!" 2>&1
 
@@ -68,12 +68,23 @@ w32tm /resync >> "!logFile!" 2>&1
 echo Setting time zone to UTC+7... >> "!logFile!"
 tzutil /s "SE Asia Standard Time" >> "!logFile!" 2>&1
 
-:: Set display resolution to 1920x1080 using NirCmd
+:: Set display resolution to 1920x1080
 echo Setting display resolution to 1920x1080... >> "!logFile!"
-"C:\Users\%USERNAME%\Desktop\anime\nircmd.exe" setdisplay 1920 1080 32 >> "!logFile!" 2>&1
+"!nircmdPath!" setdisplay 1920 1080 32 >> "!logFile!" 2>&1
 
-:: Optionally close NirCmd if needed (unnecessary unless manually invoked)
-:: taskkill /IM nircmd.exe /F >nul 2>&1
+:: Show file extensions for known file types
+echo Showing extensions for known file types... >> "!logFile!"
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v HideFileExt /t REG_DWORD /d 0 /f >> "!logFile!" 2>&1
+
+if %errorlevel% equ 0 (
+    echo Extensions for known file types have been shown. >> "!logFile!"
+    echo Applying settings change... >> "!logFile!"
+    taskkill /im explorer.exe /f >nul
+    timeout /t 1 >nul
+    start explorer.exe
+) else (
+    echo Failed to change the setting. Error code: %errorlevel% >> "!logFile!"
+)
 
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
