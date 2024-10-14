@@ -72,6 +72,9 @@ tzutil /s "SE Asia Standard Time" >> "!logFile!" 2>&1
 echo Setting display resolution to 1920x1080... >> "!logFile!"
 "C:\Users\%USERNAME%\Desktop\anime\nircmd.exe" setdisplay 1920 1080 32 >> "!logFile!" 2>&1
 
+:: Optionally close NirCmd if needed (unnecessary unless manually invoked)
+:: taskkill /IM nircmd.exe /F >nul 2>&1
+
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
 exit
