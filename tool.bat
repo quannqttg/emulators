@@ -12,17 +12,16 @@ set "installMumuUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/i
 set "installMumuPath=C:\Users\%USERNAME%\Desktop\anime\install_mumu.py"
 set "killMumuUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/killmumu.bat"
 set "killMumuPath=C:\Users\%USERNAME%\Desktop\anime\killmumu.bat"
-set "jsonSource=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
-set "animeDir=C:\Users\%USERNAME%\Desktop\anime"
-set "jsonDest=%animeDir%\data\emulators.json"
-set "nircmdPath=%animeDir%\nircmd.exe"
+set "nircmdPath=C:\Users\%USERNAME%\Desktop\anime\nircmd.exe"
 set "downloadMumuPlayerUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/download_mumu_player.bat"
-set "downloadMumuPlayerPath=%animeDir%\download_mumu_player.bat"
+set "downloadMumuPlayerPath=C:\Users\%USERNAME%\Desktop\anime\download_mumu_player.bat"
+set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_mumu_data.bat"
+set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
 
 :: Check for anime directory
-if not exist "%animeDir%" (
+if not exist "C:\Users\%USERNAME%\Desktop\anime" (
     echo Anime directory not found, creating directory...
-    mkdir "%animeDir%"
+    mkdir "C:\Users\%USERNAME%\Desktop\anime"
 )
 
 :menu
@@ -227,22 +226,38 @@ if "%choice%"=="1" (
         goto menu
     )
 ) else if "%choice%"=="6" (
-    echo Downloading emulators.json...
+    echo Downloading update_mumu_data.bat...
     
-    :: Download emulators.json
-    curl -L -o "%jsonDest%" "%jsonSource%"
+    :: Download update_mumu_data.bat
+    curl -L -o "%updateMumuDataPath%" "%updateMumuDataUrl%"
     
     :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Unable to download emulators.json.
+        echo Unable to download update_mumu_data.bat.
     ) else (
-        echo emulators.json downloaded successfully: %jsonDest%
+        echo update_mumu_data.bat downloaded successfully: %updateMumuDataPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running update_mumu_data.bat in a new window...
+        start cmd /k "%updateMumuDataPath% & echo update_mumu_data.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting update_mumu_data.bat...
+        del "%updateMumuDataPath%"
+        if errorlevel 1 (
+            echo Unable to delete update_mumu_data.bat.
+        ) else (
+            echo update_mumu_data.bat has been deleted.
+        )
     )
     goto menu
 ) else if "%choice%"=="7" (
     echo Exiting...
     exit /b
 ) else (
-    echo Invalid choice. Please choose a valid option.
+    echo Invalid option, please try again.
     goto menu
 )
