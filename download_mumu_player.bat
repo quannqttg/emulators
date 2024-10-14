@@ -13,6 +13,7 @@ echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Define URLs for files to download from GitHub
 set "muMuInstallerUrl=https://github.com/quannqttg/emulators/raw/main/MuMuInstaller_3.1.7.0_gw-overseas12_all_1712735105.exe"
+set "installerMumuUrl=https://github.com/quannqttg/emulators/raw/main/installer_mumu.exe"  :: New URL added
 set "autoRelaunchUrl=https://github.com/quannqttg/emulators/raw/main/autoRelaunch_mumu.bat"
 set "baseDbUrl=https://github.com/quannqttg/emulators/raw/main/base.db"
 set "clientMumuUrl=https://github.com/quannqttg/emulators/raw/main/client_mumu.exe"
@@ -56,6 +57,15 @@ if errorlevel 1 (
     goto :SkipToCopyPC
 )
 echo File downloaded successfully to "!animeDir!\MuMuInstaller.exe". >> "!logFile!"
+
+:: Download installer_mumu.exe
+echo Downloading installer_mumu.exe to "!animeDir!"... >> "!logFile!"  :: Download command added
+curl -L -o "!animeDir!\installer_mumu.exe" "!installerMumuUrl!"
+if errorlevel 1 (
+    echo Failed to download installer_mumu.exe. Check the URL and your network connection. >> "!logFile!"
+    goto :SkipToCopyPC
+)
+echo File downloaded successfully to "!animeDir!\installer_mumu.exe". >> "!logFile!"
 
 :: Download autoRelaunch_mumu.bat
 echo Downloading autoRelaunch_mumu.bat to "!animeDir!"... >> "!logFile!"
