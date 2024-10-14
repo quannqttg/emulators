@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-:: Định nghĩa các URL tải về và đường dẫn
+:: Define download URLs and paths
 set "setTimeDisplayUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/set_time_display.bat"
 set "setTimeDisplayPath=C:\Users\%USERNAME%\Desktop\anime\set_time_display.bat"
 set "setnewvpsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/setnewvps.bat"
@@ -16,161 +16,233 @@ set "jsonSource=https://raw.githubusercontent.com/quannqttg/emulators/main/emula
 set "animeDir=C:\Users\%USERNAME%\Desktop\anime"
 set "jsonDest=%animeDir%\data\emulators.json"
 set "nircmdPath=%animeDir%\nircmd.exe"
+set "downloadMumuPlayerUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/download_mumu_player.bat"
+set "downloadMumuPlayerPath=%animeDir%\download_mumu_player.bat"
 
-:: Kiểm tra thư mục anime
+:: Check for anime directory
 if not exist "%animeDir%" (
+    echo Anime directory not found, creating directory...
     mkdir "%animeDir%"
 )
 
 :menu
-:: Hiển thị tùy chọn
+:: Display options
 echo =======================
 echo 1. Setting time and display
 echo 2. Setting new VPS
-echo 3. Install Mumu Player
-echo 4. Kill Mumu Player
-echo 5. Update Mumu Data
-echo 6. Thoat
+echo 3. Download Mumu Player
+echo 4. Install Mumu Player
+echo 5. Kill Mumu Player
+echo 6. Update Mumu Data
+echo 7. Exit
 echo =======================
 echo.
 
-set /p choice="Chon mot tuy chon (1, 2, 3, 4, 5 hoac 6 de thoat): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, or 7 to exit): "
 
-:: Xử lý lựa chọn của người dùng
+:: Handle user choice
 if "%choice%"=="1" (
-    echo Dang tai tep set_time_display.bat...
+    echo Downloading set_time_display.bat...
     
-    :: Tải tệp set_time_display.bat
+    :: Download set_time_display.bat
     curl -L -o "%setTimeDisplayPath%" "%setTimeDisplayUrl%"
     
-    :: Kiểm tra xem tệp đã được tải xuống thành công
+    :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Khong the tai tep set_time_display.bat.
+        echo Unable to download set_time_display.bat.
     ) else (
-        echo Tep set_time_display.bat da duoc tai xuong thanh cong: %setTimeDisplayPath%
+        echo set_time_display.bat downloaded successfully: %setTimeDisplayPath%
         
         echo.
         
-        :: Mở cửa sổ mới và chạy tệp vừa tải xuống
-        echo Dang chay tep set_time_display.bat trong cua so moi...
-        start cmd /k "%setTimeDisplayPath% & echo Tep set_time_display.bat da hoan thanh. & pause"
+        :: Open a new window and run the downloaded file
+        echo Running set_time_display.bat in a new window...
+        start cmd /k "%setTimeDisplayPath% & echo set_time_display.bat has completed. & pause"
 
-        :: Đợi người dùng xác nhận trước khi xóa tệp
+        :: Wait for user confirmation before deleting the file
         pause
+
+        echo Deleting set_time_display.bat...
         del "%setTimeDisplayPath%"
-        del "%nircmdPath%"  :: Xóa tệp nircmd.exe
+        if errorlevel 1 (
+            echo Unable to delete set_time_display.bat.
+        ) else (
+            echo set_time_display.bat has been deleted.
+        )
+
+        echo Deleting nircmd.exe...
+        del "%nircmdPath%"
+        if errorlevel 1 (
+            echo Unable to delete nircmd.exe.
+        ) else (
+            echo nircmd.exe has been deleted.
+        )
 
         goto menu
     )
 ) else if "%choice%"=="2" (
-    echo Dang tai tep setnewvps.bat...
+    echo Downloading setnewvps.bat...
     
-    :: Tải tệp setnewvps.bat
+    :: Download setnewvps.bat
     curl -L -o "%setnewvpsPath%" "%setnewvpsUrl%"
     
-    :: Kiểm tra xem tệp đã được tải xuống thành công
+    :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Khong the tai tep setnewvps.bat.
+        echo Unable to download setnewvps.bat.
     ) else (
-        echo Tep setnewvps.bat da duoc tai xuong thanh cong: %setnewvpsPath%
+        echo setnewvps.bat downloaded successfully: %setnewvpsPath%
         
         echo.
         
-        :: Mở cửa sổ mới và chạy tệp vừa tải xuống
-        echo Dang chay tep setnewvps.bat trong cua so moi...
-        start cmd /k "%setnewvpsPath% & echo Tep setnewvps.bat da hoan thanh. & pause"
+        :: Open a new window and run the downloaded file
+        echo Running setnewvps.bat in a new window...
+        start cmd /k "%setnewvpsPath% & echo setnewvps.bat has completed. & pause"
 
-        :: Đợi người dùng xác nhận trước khi xóa tệp
+        :: Wait for user confirmation before deleting the file
         pause
+        echo Deleting setnewvps.bat...
         del "%setnewvpsPath%"
+        if errorlevel 1 (
+            echo Unable to delete setnewvps.bat.
+        ) else (
+            echo setnewvps.bat has been deleted.
+        )
         goto menu
     )
 ) else if "%choice%"=="3" (
-    echo Dang tai tep set_install_mumu.bat...
+    echo Downloading download_mumu_player.bat...
     
-    :: Tải tệp set_install_mumu.bat
+    :: Download download_mumu_player.bat
+    curl -L -o "%downloadMumuPlayerPath%" "%downloadMumuPlayerUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download download_mumu_player.bat.
+    ) else (
+        echo download_mumu_player.bat downloaded successfully: %downloadMumuPlayerPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running download_mumu_player.bat in a new window...
+        start cmd /k "%downloadMumuPlayerPath% & echo download_mumu_player.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting download_mumu_player.bat...
+        del "%downloadMumuPlayerPath%"
+        if errorlevel 1 (
+            echo Unable to delete download_mumu_player.bat.
+        ) else (
+            echo download_mumu_player.bat has been deleted.
+        )
+        goto menu
+    )
+) else if "%choice%"=="4" (
+    echo Downloading set_install_mumu.bat...
+    
+    :: Download set_install_mumu.bat
     curl -L -o "%setInstallMumuPath%" "%setInstallMumuUrl%"
     
-    :: Kiểm tra xem tệp đã được tải xuống thành công
+    :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Khong the tai tep set_install_mumu.bat.
+        echo Unable to download set_install_mumu.bat.
     ) else (
-        echo Tep set_install_mumu.bat da duoc tai xuong thanh cong: %setInstallMumuPath%
+        echo set_install_mumu.bat downloaded successfully: %setInstallMumuPath%
         
         echo.
         
-        :: Mở cửa sổ mới và chạy tệp vừa tải xuống
-        echo Dang chay tep set_install_mumu.bat trong cua so moi...
-        start cmd /k "%setInstallMumuPath% & echo Tep set_install_mumu.bat da hoan thanh. & pause"
+        :: Open a new window and run the downloaded file
+        echo Running set_install_mumu.bat in a new window...
+        start cmd /k "%setInstallMumuPath% & echo set_install_mumu.bat has completed. & pause"
 
-        :: Đợi người dùng xác nhận trước khi xóa tệp
+        :: Wait for user confirmation before deleting the file
         pause
+        echo Deleting set_install_mumu.bat...
         del "%setInstallMumuPath%"
+        if errorlevel 1 (
+            echo Unable to delete set_install_mumu.bat.
+        ) else (
+            echo set_install_mumu.bat has been deleted.
+        )
         
         echo.
         
-        echo Dang tai tep install_mumu.py...
+        echo Downloading install_mumu.py...
         
-        :: Tải tệp install_mumu.py
+        :: Download install_mumu.py
         curl -L -o "%installMumuPath%" "%installMumuUrl%"
         
-        :: Kiểm tra xem tệp đã được tải xuống thành công
+        :: Check if the file was downloaded successfully
         if errorlevel 1 (
-            echo Khong the tai tep install_mumu.py.
+            echo Unable to download install_mumu.py.
         ) else (
-            echo Tep install_mumu.py da duoc tai xuong thanh cong: %installMumuPath%
+            echo install_mumu.py downloaded successfully: %installMumuPath%
             
             echo.
             
-            :: Mở cửa sổ mới và chạy tệp vừa tải xuống
-            echo Dang chay tep install_mumu.py trong cua so moi...
-            start cmd /k "python \"%installMumuPath%\" & echo Tep install_mumu.py da hoan thanh. & pause"
+            :: Open a new window and run the downloaded file
+            echo Running install_mumu.py in a new window...
+            start cmd /k "python \"%installMumuPath%\" & echo install_mumu.py has completed. & pause"
 
-            :: Đợi người dùng xác nhận trước khi xóa tệp
+            :: Wait for user confirmation before deleting the file
             pause
+            echo Deleting install_mumu.py...
             del "%installMumuPath%"
+            if errorlevel 1 (
+                echo Unable to delete install_mumu.py.
+            ) else (
+                echo install_mumu.py has been deleted.
+            )
         )
     )
     goto menu
-) else if "%choice%"=="4" (
-    echo Dang tai tep killmumu.bat...
+) else if "%choice%"=="5" (
+    echo Downloading killmumu.bat...
     
-    :: Tải tệp killmumu.bat
+    :: Download killmumu.bat
     curl -L -o "%killMumuPath%" "%killMumuUrl%"
     
-    :: Kiểm tra xem tệp đã được tải xuống thành công
+    :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Khong the tai tep killmumu.bat.
+        echo Unable to download killmumu.bat.
     ) else (
-        echo Tep killmumu.bat da duoc tai xuong thanh cong: %killMumuPath%
+        echo killmumu.bat downloaded successfully: %killMumuPath%
         
         echo.
         
-        :: Mở cửa sổ mới và chạy tệp vừa tải xuống
-        echo Dang chay tep killmumu.bat trong cua so moi...
-        start cmd /k "%killMumuPath% & echo Tep killmumu.bat da hoan thanh. & pause"
+        :: Open a new window and run the downloaded file
+        echo Running killmumu.bat in a new window...
+        start cmd /k "%killMumuPath% & echo killmumu.bat has completed. & pause"
 
-        :: Đợi người dùng xác nhận trước khi xóa tệp
+        :: Wait for user confirmation before deleting the file
         pause
+        echo Deleting killmumu.bat...
         del "%killMumuPath%"
+        if errorlevel 1 (
+            echo Unable to delete killmumu.bat.
+        ) else (
+            echo killmumu.bat has been deleted.
+        )
         goto menu
     )
-) else if "%choice%"=="5" (
-    echo Dang tai tep emulators.json...
+) else if "%choice%"=="6" (
+    echo Downloading emulators.json...
     
-    :: Tải tệp emulators.json
+    :: Download emulators.json
     curl -L -o "%jsonDest%" "%jsonSource%"
     
-    :: Kiểm tra xem tệp đã được tải xuống thành công
+    :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Khong the tai tep emulators.json.
+        echo Unable to download emulators.json.
     ) else (
-        echo Tep emulators.json da duoc tai xuong thanh cong: %jsonDest%
+        echo emulators.json downloaded successfully: %jsonDest%
     )
     goto menu
-) else if "%choice%"=="6" (
+) else if "%choice%"=="7" (
+    echo Exiting...
     exit /b
 ) else (
-    echo Lua chon khong hop le. Vui long chon tu 1 den 6 de thoat.
+    echo Invalid choice. Please choose a valid option.
     goto menu
 )
