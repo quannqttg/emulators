@@ -1,3 +1,3 @@
 
 @echo off
-client_mumu.exe import
+start client_mumu.exe import
