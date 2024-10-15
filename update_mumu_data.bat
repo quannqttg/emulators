@@ -49,27 +49,35 @@ if exist "!animeDir!" (
     )
     echo emulators.json moved successfully to "!dataDir!". >> "!logFile!"
 
-    :: Run installer_mumu.exe in a new window
-    echo Running installer_mumu.exe... >> "!logFile!"
-    start "" cmd /c "!animeDir!\installer_mumu.exe"
-    if errorlevel 1 (
-        echo Failed to run installer_mumu.exe. >> "!logFile!"
-        goto :SkipToNext
+    :: Check if installer_mumu.exe exists
+    if exist "!animeDir!\installer_mumu.exe" (
+        echo Running installer_mumu.exe... >> "!logFile!"
+        start "" cmd /c "!animeDir!\installer_mumu.exe"
+        if errorlevel 1 (
+            echo Failed to run installer_mumu.exe. >> "!logFile!"
+            goto :SkipToNext
+        )
+        echo installer_mumu.exe is running. >> "!logFile!"
+    ) else (
+        echo installer_mumu.exe not found in "!animeDir!". Skipping installation. >> "!logFile!"
     )
-    echo installer_mumu.exe is running. >> "!logFile!"
 
     :: Wait for the installer to finish (you can adjust the timeout as needed)
     echo Waiting for installer_mumu.exe to finish... >> "!logFile!"
     timeout /t 5 /nobreak >nul
 
-    :: Run import_mumu_data.bat in a new window
-    echo Running import_mumu_data.bat... >> "!logFile!"
-    start "" cmd /c "!animeDir!\import_mumu_data.bat"
-    if errorlevel 1 (
-        echo Failed to run import_mumu_data.bat. >> "!logFile!"
-        goto :SkipToNext
+    :: Check if import_mumu_data.bat exists
+    if exist "!animeDir!\import_mumu_data.bat" (
+        echo Running import_mumu_data.bat... >> "!logFile!"
+        start "" cmd /c "!animeDir!\import_mumu_data.bat"
+        if errorlevel 1 (
+            echo Failed to run import_mumu_data.bat. >> "!logFile!"
+            goto :SkipToNext
+        )
+        echo import_mumu_data.bat executed successfully. >> "!logFile!"
+    ) else (
+        echo import_mumu_data.bat not found in "!animeDir!". Skipping data import. >> "!logFile!"
     )
-    echo import_mumu_data.bat executed successfully. >> "!logFile!"
 
 ) else (
     echo User directory "!userDir!" does not exist or Desktop\anime not found. Skipping to next user... >> "!logFile!"
