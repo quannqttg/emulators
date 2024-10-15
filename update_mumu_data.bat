@@ -8,7 +8,7 @@ if %errorLevel% neq 0 (
 )
 
 :: Create log file
-set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\update_log.txt"
 echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Define URL for the new file to download from GitHub
