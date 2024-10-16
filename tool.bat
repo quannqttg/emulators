@@ -19,6 +19,8 @@ set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/mai
 set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
 set "getDeivceKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/get_device_key.bat"
 set "getDeivceKeyPath=C:\Users\%USERNAME%\Desktop\anime\get_device_key.bat"
+set "getSetKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/set_key.bat"
+set "getSetKeyPath=C:\Users\%USERNAME%\Desktop\anime\set_key.bat"
 
 :: Check for anime directory
 if not exist "C:\Users\%USERNAME%\Desktop\anime" (
@@ -36,11 +38,12 @@ echo 4. Install Mumu Player
 echo 5. Kill Mumu Player
 echo 6. Update Mumu Data
 echo 7. Get Device Key
-echo 8. Exit
+echo 8. Set Device Key
+echo 9. Exit
 echo =======================
 echo.
 
-set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, or 8 to exit): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, 8, or 9 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
@@ -285,9 +288,35 @@ if "%choice%"=="1" (
         )
     )
     goto menu
-)
-
 ) else if "%choice%"=="8" (
+    echo Downloading set_key.bat...
+
+    echo Downloading set_key.bat...
+	curl -L -o "%getSetKeyPath%" "%getSetKeyUrl%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download set_key.bat.
+    ) else (
+        echo set_key.bat downloaded successfully: %getSetKeyPath%
+        echo.
+
+        :: Open a new window and run the downloaded file
+        echo Running set_key.bat in a new window...
+        start cmd /c "%getSetKeyPath% & echo get_device_key.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting set_key.bat...
+        del "%getSetKeyPath"
+        if errorlevel 1 (
+            echo Unable to delete set_key.bat.
+        ) else (
+            echo set_key.bat has been deleted.
+        )
+    )
+    goto menu
+) else if "%choice%"=="9" (
     echo Exiting...
     exit /b
 ) else (
