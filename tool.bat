@@ -17,6 +17,8 @@ set "downloadMumuPlayerUrl=https://raw.githubusercontent.com/quannqttg/emulators
 set "downloadMumuPlayerPath=C:\Users\%USERNAME%\Desktop\anime\download_mumu_player.bat"
 set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_mumu_data.bat"
 set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
+set "getDeivceKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/get_device_key.bat"
+set "getDeivceKeyPath=C:\Users\%USERNAME%\Desktop\anime\get_device_key.bat"
 
 :: Check for anime directory
 if not exist "C:\Users\%USERNAME%\Desktop\anime" (
@@ -33,11 +35,12 @@ echo 3. Download Mumu Player
 echo 4. Install Mumu Player
 echo 5. Kill Mumu Player
 echo 6. Update Mumu Data
-echo 7. Exit
+echo 7. Get Device Key
+echo 8. Exit
 echo =======================
 echo.
 
-set /p choice="Choose an option (1, 2, 3, 4, 5, 6, or 7 to exit): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, or 8 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
@@ -207,7 +210,6 @@ if "%choice%"=="1" (
         echo Unable to download killmumu.bat.
     ) else (
         echo killmumu.bat downloaded successfully: %killMumuPath%
-        
         echo.
         
         :: Open a new window and run the downloaded file
@@ -223,8 +225,9 @@ if "%choice%"=="1" (
         ) else (
             echo killmumu.bat has been deleted.
         )
-        goto menu
     )
+    goto menu
+
 ) else if "%choice%"=="6" (
     echo Downloading update_mumu_data.bat...
     
@@ -236,7 +239,6 @@ if "%choice%"=="1" (
         echo Unable to download update_mumu_data.bat.
     ) else (
         echo update_mumu_data.bat downloaded successfully: %updateMumuDataPath%
-        
         echo.
         
         :: Open a new window and run the downloaded file
@@ -254,7 +256,38 @@ if "%choice%"=="1" (
         )
     )
     goto menu
+
 ) else if "%choice%"=="7" (
+    echo Downloading get_device_key.bat...
+
+    :: Download get_device_key.bat
+    curl -L -o "%getDeivceKeyPath%" "%getDeivceKeyUrl%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download get_device_key.bat.
+    ) else (
+        echo get_device_key.bat downloaded successfully: %getDeivceKeyPath%
+        echo.
+
+        :: Open a new window and run the downloaded file
+        echo Running get_device_key.bat in a new window...
+        start cmd /c "%getDeivceKeyPath% & echo get_device_key.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting get_device_key.bat...
+        del "%getDeivceKeyPath%"
+        if errorlevel 1 (
+            echo Unable to delete get_device_key.bat.
+        ) else (
+            echo get_device_key.bat has been deleted.
+        )
+    )
+    goto menu
+)
+
+) else if "%choice%"=="8" (
     echo Exiting...
     exit /b
 ) else (
