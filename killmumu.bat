@@ -115,5 +115,4 @@ echo All operations completed successfully! >> "%logFile%"
 goto end
 
 :end
-pause
 exit
