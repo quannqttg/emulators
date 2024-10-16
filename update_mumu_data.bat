@@ -13,7 +13,7 @@ echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Define URLs for files to download from GitHub
 set "configsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
-set "mumuBatUrl=https://github.com/quannqttg/emulators/blob/main/mumu.bat"
+set "mumuBatUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/mumu.bat"
 
 setlocal enabledelayedexpansion
 
@@ -71,6 +71,13 @@ if exist "!animeDir!" (
         echo configs.json moved successfully to "!dataDir!". >> "!logFile!"
     ) else (
         echo configs.json not found in "!animeDir!". Skipping move to data directory. >> "!logFile!"
+    )
+	
+	:: Pause and prompt before checking for installer_mumu.exe
+    set /p userInput="Press Y to continue checking for installer_mumu.exe or any other key to skip: "
+    if /i "!userInput!" NEQ "y" (
+        echo Skipping check for installer_mumu.exe. >> "!logFile!"
+        goto :SkipToNext
     )
 
     :: Check if installer_mumu.exe exists
