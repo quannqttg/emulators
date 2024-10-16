@@ -217,7 +217,7 @@ if "%choice%"=="1" (
         
         :: Open a new window and run the downloaded file
         echo Running killmumu.bat in a new window...
-        start cmd /k "%killMumuPath% & echo killmumu.bat has completed. & pause"
+        start cmd /c "%killMumuPath% & echo killmumu.bat has completed. & pause"
 
         :: Wait for user confirmation before deleting the file
         pause
