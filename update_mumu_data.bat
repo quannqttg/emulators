@@ -11,8 +11,9 @@ if %errorLevel% neq 0 (
 set "logFile=C:\Users\%USERNAME%\Desktop\anime\update_log.txt"
 echo Starting script execution on %date% %time% >> "!logFile!"
 
-:: Define URL for the new file to download from GitHub
+:: Define URLs for files to download from GitHub
 set "configsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
+set "mumuBatUrl=https://github.com/quannqttg/emulators/blob/main/mumu.bat"
 
 setlocal enabledelayedexpansion
 
@@ -36,6 +37,15 @@ if exist "!animeDir!" (
         goto :SkipToNext
     )
     echo File downloaded successfully to "!animeDir!\emulators.json". >> "!logFile!"
+
+    :: Download mumu.bat
+    echo Downloading mumu.bat to "!animeDir!"... >> "!logFile!"
+    curl -L -o "!animeDir!\mumu.bat" "!mumuBatUrl!"
+    if errorlevel 1 (
+        echo Failed to download mumu.bat. Check the URL and your network connection. >> "!logFile!"
+        goto :SkipToNext
+    )
+    echo File downloaded successfully to "!animeDir!\mumu.bat". >> "!logFile!"
 
     :: Move emulators.json to the data directory
     if not exist "!dataDir!" (
