@@ -30,12 +30,12 @@ if errorlevel 1 (
 
 :askConfirmation
 :: Ask for user confirmation to proceed with file deletion and related tasks
-set /p confirm="Do you want to proceed with file deletion and related tasks? (y/n/x): "
+set /p confirm="Do you want to proceed with file deletion (y), skip to countdown and run autoRelaunch_mumu.bat (n), or exit (x)? (y/n/x): "
 if /i "%confirm%"=="y" goto proceed
-if /i "%confirm%"=="n" goto skipDelete
+if /i "%confirm%"=="n" goto delayAndRun
 if /i "%confirm%"=="x" (
-    echo User chose to exit. Exiting... >> "%logFile%"
-    exit /b 0
+    echo Exiting the script as per user request... >> "%logFile%"
+    exit /b
 )
 echo Invalid input. Please enter 'y', 'n', or 'x'.
 goto askConfirmation
@@ -89,11 +89,8 @@ if errorlevel 1 (
 echo Download completed successfully! >> "%logFile%"
 echo Download completed successfully!
 
-goto delayAndRun
-
-:skipDelete
-echo Skipping deletion. Proceeding to delay and auto run... >> "%logFile%"
-goto delayAndRun
+:: Exit the CMD window after completing the y option
+exit /b
 
 :delayAndRun
 :: Add a 10-second countdown before running autoRelaunch_mumu.bat
