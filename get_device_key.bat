@@ -5,7 +5,7 @@ setlocal enabledelayedexpansion
 set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
 set "logFile=%animeDir%\get_device_key.log"
-set "key_file=%animeDir%\key.txt"
+set "key_file=%animeDir%\key.json"
 set "config_file=%animeDir%\configs.json"
 
 echo Starting the process to get device key...
