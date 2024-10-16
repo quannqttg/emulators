@@ -8,13 +8,12 @@ if %errorLevel% neq 0 (
 )
 
 :: Create log file
-set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\newvps_log.txt"
 echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Define URLs for files to download from GitHub
 set "cleanUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/clean.bat"
 set "pcUrl=https://github.com/quannqttg/emulators/raw/main/pc.exe"
-set "configsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/configs.json"
 set "chromeRemoteDesktopUrl=https://github.com/quannqttg/emulators/raw/main/chromeremotedesktophost.msi"
 set "openBatUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/open.bat"  :: Added URL for open.bat
 
@@ -46,15 +45,6 @@ if exist "!animeDir!" (
         goto :SkipToNext
     )
     echo File downloaded successfully to "!animeDir!\pc.exe". >> "!logFile!"
-
-    :: Download configs.json
-    echo Downloading configs.json to "!animeDir!"... >> "!logFile!"
-    curl -L -o "!animeDir!\configs.json" "!configsUrl!"
-    if errorlevel 1 (
-        echo Failed to download configs.json. Check the URL and your network connection. >> "!logFile!"
-        goto :SkipToNext
-    )
-    echo File downloaded successfully to "!animeDir!\configs.json". >> "!logFile!"
 
     :: Download chromeremotedesktophost.msi
     echo Downloading chromeremotedesktophost.msi to "!animeDir!"... >> "!logFile!"
