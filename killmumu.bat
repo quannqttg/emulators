@@ -90,7 +90,7 @@ echo Download completed successfully! >> "%logFile%"
 echo Download completed successfully!
 
 :: Exit the CMD window after completing the y option
-exit /b
+exit /b 1
 
 :delayAndRun
 :: Add a 10-second countdown before running autoRelaunch_mumu.bat
