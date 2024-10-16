@@ -59,3 +59,4 @@ echo "device_key": "%device_key%" >> "%key_file%"
 
 echo Device key saved to %key_file%
 endlocal
+exit
