@@ -89,7 +89,6 @@ if errorlevel 1 (
 echo Download completed successfully! >> "%logFile%"
 echo Download completed successfully!
 
-goto :EOF
 goto delayAndRun
 
 :skipDelete
@@ -117,7 +116,7 @@ echo Running autoRelaunch_mumu.bat... >> "%logFile%"
 call autoRelaunch_mumu.bat || exit /b 1
 echo All operations completed successfully! >> "%logFile%"
 goto end
-:skipSection
+
 :end
 pause
 exit
