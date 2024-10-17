@@ -308,7 +308,7 @@ if "%choice%"=="1" (
         :: Wait for user confirmation before deleting the file
         pause
         echo Deleting set_key.bat...
-        del "%getSetKeyPath"
+        del "%getSetKeyPath%"
         if errorlevel 1 (
             echo Unable to delete set_key.bat.
         ) else (
