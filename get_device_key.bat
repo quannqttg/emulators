@@ -7,7 +7,7 @@ set "animeDir=C:\Users\%userDir%\Desktop\anime"
 set "logFile=%animeDir%\get_device_key.log"
 set "key_file=%animeDir%\key.json"
 set "config_file=%animeDir%\configs.json"
-set "output_file=%animeDir%\shared_folder.json"
+set "sharedfolder_file=%animeDir%\shared_folder.json"
 
 echo Starting the process to get device key...
 echo %date% %time% - get_device_key.bat is running >> "%logFile%"
@@ -87,10 +87,14 @@ if "!shared_folder!"=="" (
     exit /b 1
 )
 
-:: Write the value to shared_folder.json with the specified format
-echo "shared_folder": "!shared_folder!" > "%output_file%"
-echo Shared folder written to %output_file% >> "%logFile%"
-echo Shared folder written to %output_file%  REM Output to CMD
+:: Write the value to shared_folder.json with the correct JSON structure
+(
+    echo {
+    echo     "shared_folder": "!shared_folder!"
+    echo }
+) > "%sharedfolder_file%"
+echo Shared folder written to %sharedfolder_file% >> "%logFile%"
+echo Shared folder written to %sharedfolder_file%  REM Output to CMD
 
 endlocal
 exit /b 0
