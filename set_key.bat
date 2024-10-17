@@ -1,59 +1,85 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Set the current username and define paths for anime directory and log file
+REM Define paths for files
 set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
-set "logFile=%animeDir%\set_key.log"
-set "key_file=%animeDir%\key.json"
+set "logFile=%animeDir%\update_shared_folder.log"
+set "shared_folder_file=%animeDir%\shared_folder.json"
 set "config_file=%animeDir%\configs.json"
+set "key_file=%animeDir%\key.json"
 
-echo Starting the process to set device key...
-echo %date% %time% - set_key.bat is running >> "%logFile%"
+echo Starting the process to update shared_folder and device_key...
+echo %date% %time% - update_shared_folder.bat is running >> "%logFile%"
 
-REM Check for administrative privileges
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo Requesting administrative privileges... >> "%logFile%"
-    powershell -command "Start-Process cmd -ArgumentList '/c %~f0' -Verb RunAs"
-    exit /b
-) else (
-    echo Admin privileges confirmed. >> "%logFile%"
-)
-
-REM Check for PowerShell presence
-where powershell >nul 2>&1
-if errorlevel 1 (
-    echo PowerShell not found. Exiting... >> "%logFile%"
+REM Check if shared_folder.json exists
+if not exist "%shared_folder_file%" (
+    echo %date% %time% - shared_folder.json not found. Exiting... >> "%logFile%"
+    echo shared_folder.json does not exist. Exiting...
     exit /b 1
-) else (
-    echo PowerShell is available. >> "%logFile%"
 )
+
+REM Print the path to shared_folder_file for debugging
+echo The path to shared_folder_file is: %shared_folder_file%
+
+REM Print the content of shared_folder.json for debugging
+type "%shared_folder_file%"
+
+REM Read shared_folder value from shared_folder.json
+set "shared_folder="
+for /f "delims=" %%A in ('findstr /r /c:"\"shared_folder\"" "%shared_folder_file%"') do (
+    set "line=%%A"
+    REM Extract the value from the line by removing unwanted parts
+    set "line=!line:*: =!"
+    set "line=!line:~1,-1!"  REM Remove leading and trailing quotes
+    set "shared_folder=!line!"
+)
+
+REM Check if shared_folder is empty
+if "!shared_folder!"=="" (
+    echo %date% %time% - Shared folder extraction failed. Exiting... >> "%logFile%"
+    echo Failed to extract shared_folder value. Exiting...
+    exit /b 1
+)
+
+REM Update configs.json with the new shared_folder
+powershell -Command "(Get-Content %config_file%) -replace '\"shared_folder\": \"\"', '\"shared_folder\": \"!shared_folder!\"' | Set-Content %config_file%"
+
+echo Configs.json updated with new shared_folder: !shared_folder! >> "%logFile%"
+echo Configs.json successfully updated with shared_folder: !shared_folder!
 
 REM Check if key.json exists
 if not exist "%key_file%" (
     echo %date% %time% - key.json not found. Exiting... >> "%logFile%"
+    echo key.json does not exist. Exiting...
     exit /b 1
 )
 
-REM Read the device key from key.json
+REM Print the path to key_file for debugging
+echo The path to key_file is: %key_file%
+
+REM Read device_key value from key.json
+set "device_key="
 for /f "tokens=2 delims=: " %%A in ('findstr /r /c:"\"device_key\"" "%key_file%"') do (
-    set "device_key=%%~A"
+    set "line=%%A"
+    REM Extract the value from the line by removing unwanted parts
+    set "line=!line:*: =!"
+    set "line=!line:~1,-1!"  REM Remove leading and trailing quotes
+    set "device_key=!line!"
 )
 
-REM Remove any surrounding quotes
-set "device_key=%device_key:~1,-2%"
-
-REM Check if the device_key is empty
-if "%device_key%"=="" (
+REM Check if device_key is empty
+if "!device_key!"=="" (
     echo %date% %time% - Device key extraction failed. Exiting... >> "%logFile%"
+    echo Failed to extract device_key value. Exiting...
     exit /b 1
 )
 
-REM Update configs.json with the new device key
-powershell -Command "(Get-Content %config_file%) -replace '\"device_key\": \"\"', '\"device_key\": \"%device_key%\"' | Set-Content %config_file%"
+REM Update configs.json with the new device_key
+powershell -Command "(Get-Content %config_file%) -replace '\"device_key\": \"\"', '\"device_key\": \"!device_key!\"' | Set-Content %config_file%"
 
-echo Configs.json updated with new device key: %device_key% >> "%logFile%"
+echo Configs.json updated with new device_key: !device_key! >> "%logFile%"
+echo Configs.json successfully updated with device_key: !device_key!
 
 endlocal
-exit
+exit /b 0
