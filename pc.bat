@@ -53,7 +53,7 @@ for /f "delims=0123456789" %%i in ("!freeSpace!") do (
     exit /b 3
 )
 
-set "minRequiredSpace=22155259904"
+set "minRequiredSpace=42949672960"
 echo [DEBUG] Required minimum space: !minRequiredSpace! bytes
 echo Required minimum space: !minRequiredSpace! bytes >> "%logFile%"
 
