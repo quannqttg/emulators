@@ -12,6 +12,27 @@ set "key_file=%animeDir%\key.json"
 echo Starting the process to update shared_folder and device_key...
 echo %date% %time% - update_shared_folder.bat is running >> "%logFile%"
 
+REM Check if configs.json exists and delete it if it does
+if exist "%config_file%" (
+    echo %date% %time% - configs.json found. Deleting it... >> "%logFile%"
+    del "%config_file%"
+    if errorlevel 1 (
+        echo %date% %time% - Failed to delete configs.json. Exiting... >> "%logFile%"
+        echo Failed to delete configs.json. Exiting...
+        exit /b 1
+    )
+    echo %date% %time% - configs.json deleted successfully. >> "%logFile%"
+)
+
+REM Download configs.json from GitHub using curl
+echo Downloading configs.json from GitHub...
+curl -L -o "%config_file%" "https://raw.githubusercontent.com/quannqttg/emulators/main/configs.json"
+if errorlevel 1 (
+    echo %date% %time% - Failed to download configs.json. Exiting... >> "%logFile%"
+    echo Failed to download configs.json. Exiting...
+    exit /b 1
+)
+
 REM Check if shared_folder.json exists
 if not exist "%shared_folder_file%" (
     echo %date% %time% - shared_folder.json not found. Exiting... >> "%logFile%"
