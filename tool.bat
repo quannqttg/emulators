@@ -17,8 +17,8 @@ set "downloadMumuPlayerUrl=https://raw.githubusercontent.com/quannqttg/emulators
 set "downloadMumuPlayerPath=C:\Users\%USERNAME%\Desktop\anime\download_mumu_player.bat"
 set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_mumu_data.bat"
 set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
-set "getDeviceKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/get_device_key.bat"
-set "getDeviceKeyPath=C:\Users\%USERNAME%\Desktop\anime\get_device_key.bat"
+set "getDeivceKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/get_device_key.bat"
+set "getDeivceKeyPath=C:\Users\%USERNAME%\Desktop\anime\get_device_key.bat"
 set "getSetKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/set_key.bat"
 set "getSetKeyPath=C:\Users\%USERNAME%\Desktop\anime\set_key.bat"
 
@@ -43,95 +43,278 @@ echo 9. Exit
 echo =======================
 echo.
 
-set /p choice="Choose an option (1-9): "
-
-:: Function to download a file
-:downloadFile
-set "url=%~1"
-set "outputPath=%~2"
-echo Downloading %outputPath%...
-curl -L -o "%outputPath%" "%url%"
-if errorlevel 1 (
-    echo Unable to download %outputPath%.
-    exit /b 1
-) else (
-    echo %outputPath% downloaded successfully.
-)
-exit /b 0
-
-:: Function to run a downloaded file
-:runFile
-set "filePath=%~1"
-echo Running %filePath% in a new window...
-start cmd /k "%filePath% & echo %filePath% has completed. & pause"
-exit /b 0
-
-:: Function to delete a file
-:deleteFile
-set "filePath=%~1"
-echo Deleting %filePath%...
-del "%filePath%"
-if errorlevel 1 (
-    echo Unable to delete %filePath%.
-) else (
-    echo %filePath% has been deleted.
-)
-exit /b 0
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, 8, or 9 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
-    call :downloadFile "%setTimeDisplayUrl%" "%setTimeDisplayPath%"
-    call :runFile "%setTimeDisplayPath%"
-    pause
-    call :deleteFile "%setTimeDisplayPath%"
-    call :deleteFile "%nircmdPath%"
-    goto menu
-) else if "%choice%"=="2" (
-    call :downloadFile "%setnewvpsUrl%" "%setnewvpsPath%"
-    call :runFile "%setnewvpsPath%"
-    pause
-    call :deleteFile "%setnewvpsPath%"
-    goto menu
-) else if "%choice%"=="3" (
-    call :downloadFile "%downloadMumuPlayerUrl%" "%downloadMumuPlayerPath%"
-    call :runFile "%downloadMumuPlayerPath%"
-    pause
-    call :deleteFile "%downloadMumuPlayerPath%"
-    goto menu
-) else if "%choice%"=="4" (
-    call :downloadFile "%setInstallMumuUrl%" "%setInstallMumuPath%"
-    call :runFile "%setInstallMumuPath%"
-    pause
-    call :deleteFile "%setInstallMumuPath%"
+    echo Downloading set_time_display.bat...
     
-    call :downloadFile "%installMumuUrl%" "%installMumuPath%"
-    call :runFile "%installMumuPath%"
-    pause
-    call :deleteFile "%installMumuPath%"
+    :: Download set_time_display.bat
+    curl -L -o "%setTimeDisplayPath%" "%setTimeDisplayUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download set_time_display.bat.
+    ) else (
+        echo set_time_display.bat downloaded successfully: %setTimeDisplayPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running set_time_display.bat in a new window...
+        start cmd /k "%setTimeDisplayPath% & echo set_time_display.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+
+        echo Deleting set_time_display.bat...
+        del "%setTimeDisplayPath%"
+        if errorlevel 1 (
+            echo Unable to delete set_time_display.bat.
+        ) else (
+            echo set_time_display.bat has been deleted.
+        )
+
+        echo Deleting nircmd.exe...
+        del "%nircmdPath%"
+        if errorlevel 1 (
+            echo Unable to delete nircmd.exe.
+        ) else (
+            echo nircmd.exe has been deleted.
+        )
+
+        goto menu
+    )
+) else if "%choice%"=="2" (
+    echo Downloading setnewvps.bat...
+    
+    :: Download setnewvps.bat
+    curl -L -o "%setnewvpsPath%" "%setnewvpsUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download setnewvps.bat.
+    ) else (
+        echo setnewvps.bat downloaded successfully: %setnewvpsPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running setnewvps.bat in a new window...
+        start cmd /k "%setnewvpsPath% & echo setnewvps.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting setnewvps.bat...
+        del "%setnewvpsPath%"
+        if errorlevel 1 (
+            echo Unable to delete setnewvps.bat.
+        ) else (
+            echo setnewvps.bat has been deleted.
+        )
+        goto menu
+    )
+) else if "%choice%"=="3" (
+    echo Downloading download_mumu_player.bat...
+    
+    :: Download download_mumu_player.bat
+    curl -L -o "%downloadMumuPlayerPath%" "%downloadMumuPlayerUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download download_mumu_player.bat.
+    ) else (
+        echo download_mumu_player.bat downloaded successfully: %downloadMumuPlayerPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running download_mumu_player.bat in a new window...
+        start cmd /k "%downloadMumuPlayerPath% & echo download_mumu_player.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting download_mumu_player.bat...
+        del "%downloadMumuPlayerPath%"
+        if errorlevel 1 (
+            echo Unable to delete download_mumu_player.bat.
+        ) else (
+            echo download_mumu_player.bat has been deleted.
+        )
+        goto menu
+    )
+) else if "%choice%"=="4" (
+    echo Downloading set_install_mumu.bat...
+    
+    :: Download set_install_mumu.bat
+    curl -L -o "%setInstallMumuPath%" "%setInstallMumuUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download set_install_mumu.bat.
+    ) else (
+        echo set_install_mumu.bat downloaded successfully: %setInstallMumuPath%
+        
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running set_install_mumu.bat in a new window...
+        start cmd /k "%setInstallMumuPath% & echo set_install_mumu.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting set_install_mumu.bat...
+        del "%setInstallMumuPath%"
+        if errorlevel 1 (
+            echo Unable to delete set_install_mumu.bat.
+        ) else (
+            echo set_install_mumu.bat has been deleted.
+        )
+        
+        echo.
+        
+        echo Downloading install_mumu.py...
+        
+        :: Download install_mumu.py
+        curl -L -o "%installMumuPath%" "%installMumuUrl%"
+        
+        :: Check if the file was downloaded successfully
+        if errorlevel 1 (
+            echo Unable to download install_mumu.py.
+        ) else (
+            echo install_mumu.py downloaded successfully: %installMumuPath%
+            
+            echo.
+            
+            :: Open a new window and run the downloaded file
+            echo Running install_mumu.py in a new window...
+            start cmd /k "python \"%installMumuPath%\" & echo install_mumu.py has completed. & pause"
+
+            :: Wait for user confirmation before deleting the file
+            pause
+            echo Deleting install_mumu.py...
+            del "%installMumuPath%"
+            if errorlevel 1 (
+                echo Unable to delete install_mumu.py.
+            ) else (
+                echo install_mumu.py has been deleted.
+            )
+        )
+    )
     goto menu
 ) else if "%choice%"=="5" (
-    call :downloadFile "%killMumuUrl%" "%killMumuPath%"
-    call :runFile "%killMumuPath%"
-    pause
-    call :deleteFile "%killMumuPath%"
+    echo Downloading killmumu.bat...
+    
+    :: Download killmumu.bat
+    curl -L -o "%killMumuPath%" "%killMumuUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download killmumu.bat.
+    ) else (
+        echo killmumu.bat downloaded successfully: %killMumuPath%
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running killmumu.bat in a new window...
+        start cmd /c "%killMumuPath% & echo killmumu.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting killmumu.bat...
+        del "%killMumuPath%"
+        if errorlevel 1 (
+            echo Unable to delete killmumu.bat.
+        ) else (
+            echo killmumu.bat has been deleted.
+        )
+    )
     goto menu
+
 ) else if "%choice%"=="6" (
-    call :downloadFile "%updateMumuDataUrl%" "%updateMumuDataPath%"
-    call :runFile "%updateMumuDataPath%"
-    pause
-    call :deleteFile "%updateMumuDataPath%"
+    echo Downloading update_mumu_data.bat...
+    
+    :: Download update_mumu_data.bat
+    curl -L -o "%updateMumuDataPath%" "%updateMumuDataUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download update_mumu_data.bat.
+    ) else (
+        echo update_mumu_data.bat downloaded successfully: %updateMumuDataPath%
+        echo.
+        
+        :: Open a new window and run the downloaded file
+        echo Running update_mumu_data.bat in a new window...
+        start cmd /k "%updateMumuDataPath% & echo update_mumu_data.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting update_mumu_data.bat...
+        del "%updateMumuDataPath%"
+        if errorlevel 1 (
+            echo Unable to delete update_mumu_data.bat.
+        ) else (
+            echo update_mumu_data.bat has been deleted.
+        )
+    )
     goto menu
+
 ) else if "%choice%"=="7" (
-    call :downloadFile "%getDeviceKeyUrl%" "%getDeviceKeyPath%"
-    call :runFile "%getDeviceKeyPath%"
-    pause
-    call :deleteFile "%getDeviceKeyPath%"
+    echo Downloading get_device_key.bat...
+
+    :: Download get_device_key.bat
+    curl -L -o "%getDeivceKeyPath%" "%getDeivceKeyUrl%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download get_device_key.bat.
+    ) else (
+        echo get_device_key.bat downloaded successfully: %getDeivceKeyPath%
+        echo.
+
+        :: Open a new window and run the downloaded file
+        echo Running get_device_key.bat in a new window...
+        start cmd /c "%getDeivceKeyPath% & echo get_device_key.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting get_device_key.bat...
+        del "%getDeivceKeyPath%"
+        if errorlevel 1 (
+            echo Unable to delete get_device_key.bat.
+        ) else (
+            echo get_device_key.bat has been deleted.
+        )
+    )
     goto menu
 ) else if "%choice%"=="8" (
-    call :downloadFile "%getSetKeyUrl%" "%getSetKeyPath%"
-    call :runFile "%getSetKeyPath%"
-    pause
-    call :deleteFile "%getSetKeyPath%"
+    echo Downloading set_key.bat...
+
+    echo Downloading set_key.bat...
+	curl -L -o "%getSetKeyPath%" "%getSetKeyUrl%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download set_key.bat.
+    ) else (
+        echo set_key.bat downloaded successfully: %getSetKeyPath%
+        echo.
+
+        :: Open a new window and run the downloaded file
+        echo Running set_key.bat in a new window...
+        start cmd /c "%getSetKeyPath% & echo get_device_key.bat has completed. & pause"
+
+        :: Wait for user confirmation before deleting the file
+        pause
+        echo Deleting set_key.bat...
+        del "%getSetKeyPath"
+        if errorlevel 1 (
+            echo Unable to delete set_key.bat.
+        ) else (
+            echo set_key.bat has been deleted.
+        )
+    )
     goto menu
 ) else if "%choice%"=="9" (
     echo Exiting...
