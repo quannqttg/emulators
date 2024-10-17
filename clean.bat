@@ -58,10 +58,10 @@ for /f "delims=0123456789" %%i in ("%freeSpace%") do (
 
 REM Echo the free space in bytes for logging purposes
 echo Free space on C: drive: !freeSpace! bytes
-set "minRequiredSpace=22155259904"
+set "minRequiredSpace=42949672960"
 echo Required minimum space: !minRequiredSpace! bytes
 
-REM Step 3: Check if there is at least 22,155,259,904 bytes free using PowerShell for accurate comparison
+REM Step 3: Check if there is at least 42,949,672,960 bytes free using PowerShell for accurate comparison
 powershell -command "$freeSpace = [int64]$Env:freeSpace; $minRequiredSpace = [int64]$Env:minRequiredSpace; if ($freeSpace -lt $minRequiredSpace) { exit 1 } else { exit 0 }" freeSpace=!freeSpace! minRequiredSpace=!minRequiredSpace!
 
 if errorlevel 1 (
