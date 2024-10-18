@@ -3,7 +3,7 @@
 REM Set user directory and anime directory variables
 set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
-set "logFile=%animeDir%\uninstall.txt"
+set "logFile=%animeDir%\uninstall_log.txt"
 
 REM Check if the anime directory exists, if not, create it
 if not exist "%animeDir%" (
