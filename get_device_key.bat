@@ -6,8 +6,8 @@ set "userDir=%USERNAME%"
 set "animeDir=C:\Users\%userDir%\Desktop\anime"
 set "logFile=%animeDir%\get_device_key.log"
 set "key_file=%animeDir%\key.json"
-set "config_file=%animeDir%\configs.json"
 set "sharedfolder_file=%animeDir%\shared_folder.json"
+set "config_file=%animeDir%\configs.json"
 
 echo Starting the process to get device key...
 echo %date% %time% - get_device_key.bat is running >> "%logFile%"
@@ -29,6 +29,16 @@ if errorlevel 1 (
     exit /b 1
 ) else (
     echo PowerShell is available. >> "%logFile%"
+)
+
+REM Remove key.json and shared_folder.json if they exist
+if exist "%key_file%" (
+    del "%key_file%"
+    echo Deleted existing key.json file. >> "%logFile%"
+)
+if exist "%sharedfolder_file%" (
+    del "%sharedfolder_file%"
+    echo Deleted existing shared_folder.json file. >> "%logFile%"
 )
 
 REM Check if configs.json exists
@@ -56,18 +66,11 @@ if "%device_key%"=="" (
 )
 
 REM Write the device key to key.json
-echo "device_key": "%device_key%" >> "%key_file%"
+echo {"device_key": "%device_key%"} > "%key_file%"
 echo Device key saved to %key_file% >> "%logFile%"
 
 :: Start the extraction of shared_folder from configs.json
 echo %date% %time% - Starting extraction of shared_folder... >> "%logFile%"
-
-:: Check if the JSON file exists
-if not exist "%config_file%" (
-    echo JSON file does not exist. Exiting... >> "%logFile%"
-    echo JSON file does not exist. Exiting...
-    exit /b 1
-)
 
 :: Extract shared_folder from the JSON file
 for /f "tokens=1,* delims=:" %%A in ('findstr /r /c:"\"shared_folder\"" "%config_file%"') do (
