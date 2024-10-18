@@ -1,5 +1,5 @@
 @echo off
-set "logFile=C:\Users\%USERNAME%\Desktop\anime\close_chrome_log.txt"
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\uninstall_log.txt"
 
 REM Create log file if it doesn't exist
 if not exist "%logFile%" (
