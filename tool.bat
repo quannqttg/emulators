@@ -17,10 +17,11 @@ set "downloadMumuPlayerUrl=https://raw.githubusercontent.com/quannqttg/emulators
 set "downloadMumuPlayerPath=C:\Users\%USERNAME%\Desktop\anime\download_mumu_player.bat"
 set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_mumu_data.bat"
 set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
-set "getDeivceKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/get_device_key.bat"
-set "getDeivceKeyPath=C:\Users\%USERNAME%\Desktop\anime\get_device_key.bat"
-set "getSetKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/set_key.bat"
-set "getSetKeyPath=C:\Users\%USERNAME%\Desktop\anime\set_key.bat"
+set "getUpdateConfigsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_configs.bat"
+set "getUpdateConfigsPath=C:\Users\%USERNAME%\Desktop\anime\update_configs.bat"
+set "getUninstallMuMuUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/uninstall_mumu.bat"
+set "getUninstallMuMuPath=C:\Users\%USERNAME%\Desktop\anime\uninstall_mumu.bat"
+
 
 :: Check for anime directory
 if not exist "C:\Users\%USERNAME%\Desktop\anime" (
@@ -37,8 +38,8 @@ echo 3. Download Mumu Player
 echo 4. Install Mumu Player
 echo 5. Kill Mumu Player
 echo 6. Update Mumu Data
-echo 7. Get Device Key
-echo 8. Set Device Key
+echo 7. Update Connfis 
+echo 8. Uninstall MuMu
 echo 9. Exit
 echo =======================
 echo.
@@ -261,58 +262,58 @@ if "%choice%"=="1" (
     goto menu
 
 ) else if "%choice%"=="7" (
-    echo Downloading get_device_key.bat...
+    echo Downloading update_configs.bat...
 
-    :: Download get_device_key.bat
-    curl -L -o "%getDeivceKeyPath%" "%getDeivceKeyUrl%"
+    :: Download update_configs.bat
+    curl -L -o "%getUpdateConfigsPath%" "%getUpdateConfigsUrl%"
 
     :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Unable to download get_device_key.bat.
+        echo Unable to download update_configs.bat.
     ) else (
-        echo get_device_key.bat downloaded successfully: %getDeivceKeyPath%
+        echo update_configs.bat downloaded successfully: %getUpdateConfigsPath%
         echo.
 
         :: Open a new window and run the downloaded file
-        echo Running get_device_key.bat in a new window...
-        start cmd /c "%getDeivceKeyPath% & echo get_device_key.bat has completed. & pause"
+        echo Running update_configs.bat in a new window...
+        start cmd /c "%getUpdateConfigsPath% & echo update_configs.bat has completed. & pause"
 
         :: Wait for user confirmation before deleting the file
         pause
-        echo Deleting get_device_key.bat...
-        del "%getDeivceKeyPath%"
+        echo Deleting update_configs.bat...
+        del "%getUpdateConfigsPath%"
         if errorlevel 1 (
-            echo Unable to delete get_device_key.bat.
+            echo Unable to delete update_configs.bat.
         ) else (
-            echo get_device_key.bat has been deleted.
+            echo update_configs.bat has been deleted.
         )
     )
     goto menu
 ) else if "%choice%"=="8" (
-    echo Downloading set_key.bat...
+    echo Downloading uninstall_mumu.bat...
 
-    echo Downloading set_key.bat...
-	curl -L -o "%getSetKeyPath%" "%getSetKeyUrl%"
+    echo Downloading uninstall_mumu.bat...
+	curl -L -o "%getUninstallMuMuPath%" "%getUninstallMuMuUrl%"
 
     :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Unable to download set_key.bat.
+        echo Unable to download uninstall_mumu.bat.
     ) else (
-        echo set_key.bat downloaded successfully: %getSetKeyPath%
+        echo uninstall_mumu.bat downloaded successfully: %getUninstallMuMuPath%
         echo.
 
         :: Open a new window and run the downloaded file
-        echo Running set_key.bat in a new window...
-        start cmd /c "%getSetKeyPath% & echo get_device_key.bat has completed. & pause"
+        echo Running uninstall_mumu.bat in a new window...
+        start cmd /c "%getUninstallMuMuPath% & echo update_configs.bat has completed. & pause"
 
         :: Wait for user confirmation before deleting the file
         pause
-        echo Deleting set_key.bat...
-        del "%getSetKeyPath%"
+        echo Deleting uninstall_mumu.bat...
+        del "%getUninstallMuMuPath%"
         if errorlevel 1 (
-            echo Unable to delete set_key.bat.
+            echo Unable to delete uninstall_mumu.bat.
         ) else (
-            echo set_key.bat has been deleted.
+            echo uninstall_mumu.bat has been deleted.
         )
     )
     goto menu
