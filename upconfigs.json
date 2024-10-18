@@ -5,7 +5,7 @@
     "fluxus_key_link": "",
     "auto_execute_path": "/storage/emulated/0/Delta/Autoexecute/",
     "check_cookie_dead": true,
-    "launch_menu_before_game": true,
+    "launch_menu_before_game": false,
     "kill_adb_when_fail_command": true,
     "kill_frozen_mumuplayer": true,
     "permission_y_offset": 0,
