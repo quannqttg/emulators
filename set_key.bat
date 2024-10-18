@@ -26,7 +26,7 @@ if exist "%config_file%" (
 
 REM Download configs.json from GitHub using curl
 echo Downloading configs.json from GitHub...
-curl -L -o "%config_file%" "https://raw.githubusercontent.com/quannqttg/emulators/main/configs.json"
+curl -L -o "%config_file%" "https://raw.githubusercontent.com/quannqttg/emulators/blob/main/upconfigs.json"
 if errorlevel 1 (
     echo %date% %time% - Failed to download configs.json. Exiting... >> "%logFile%"
     echo Failed to download configs.json. Exiting...
