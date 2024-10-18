@@ -7,6 +7,7 @@ set "animeDir=C:\Users\%userDir%\Desktop\anime"
 set "logFile=%animeDir%\update_shared_folder.log"
 set "shared_folder_file=%animeDir%\shared_folder.json"
 set "config_file=%animeDir%\configs.json"
+set "upconfig_file=%animeDir%\configs.json"
 set "key_file=%animeDir%\key.json"
 
 echo Starting the process to update shared_folder and device_key...
@@ -26,7 +27,7 @@ if exist "%config_file%" (
 
 REM Download upconfigs.json from GitHub using curl
 echo Downloading upconfigs.json from GitHub...
-curl -L -o "%config_file%" "https://raw.githubusercontent.com/quannqttg/emulators/blob/main/upconfigs.json"
+curl -L -o "%upconfig_file%" "https://raw.githubusercontent.com/quannqttg/emulators/main/upconfigs.json"
 if errorlevel 1 (
     echo %date% %time% - Failed to download configs.json. Exiting... >> "%logFile%"
     echo Failed to download configs.json. Exiting...
