@@ -24,8 +24,8 @@ if exist "%config_file%" (
     echo %date% %time% - configs.json deleted successfully. >> "%logFile%"
 )
 
-REM Download configs.json from GitHub using curl
-echo Downloading configs.json from GitHub...
+REM Download upconfigs.json from GitHub using curl
+echo Downloading upconfigs.json from GitHub...
 curl -L -o "%config_file%" "https://raw.githubusercontent.com/quannqttg/emulators/blob/main/upconfigs.json"
 if errorlevel 1 (
     echo %date% %time% - Failed to download configs.json. Exiting... >> "%logFile%"
