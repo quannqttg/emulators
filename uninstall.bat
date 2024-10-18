@@ -8,7 +8,7 @@ set "CloseChromeUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/c
 set "CloseChromePath=C:\Users\%USERNAME%\Desktop\anime\close_chrome.bat"
 
 :: Log file setup
-set "logFile=C:\Users\%USERNAME%\Desktop\anime\script_log.txt"
+set "logFile=C:\Users\%USERNAME%\Desktop\anime\uninstall_log.txt"
 echo Script started at %date% %time% >> "%logFile%"
 echo User profile: %USERPROFILE% >> "%logFile%"
 
