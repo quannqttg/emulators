@@ -7,13 +7,13 @@ set "logFile=%animeDir%\uninstall.txt"
 
 REM Check if the anime directory exists, if not, create it
 if not exist "%animeDir%" (
-    echo Creating anime directory at: %animeDir%
+    echo Creating anime directory at: %animeDir% >> "%logFile%"
     mkdir "%animeDir%"
 )
 
 REM Create log file if it doesn't exist
 if not exist "%logFile%" (
-    echo Creating log file at: %logFile%
+    echo Creating log file at: %logFile% >> "%logFile%"
     type nul > "%logFile%"
 )
 
@@ -43,15 +43,18 @@ if %errorlevel% neq 0 (
     echo Navigated to MuMu Player directory: C:\Program Files\Netease\MuMuPlayerGlobal-12.0 >> "%logFile%"
 )
 
-:: Run the uninstaller
-echo Running uninstall.exe... >> "%logFile%"
-start "" "uninstall.exe"
-if %errorlevel% neq 0 (
-    echo Failed to start uninstall.exe. >> "%logFile%"
-    exit /b
-) else (
-    echo Uninstall process started successfully. >> "%logFile%"
+:: Run the uninstaller silently (check for silent option)
+echo Running uninstall.exe silently... >> "%logFile%"
+start /B "MuMu Uninstaller" "uninstall.exe" /S
+
+:: Wait for the uninstallation process to complete
+:checkProcess
+timeout /t 5 >nul
+tasklist | find /I "uninstall.exe" >nul
+if %errorlevel% == 0 (
+    echo Uninstallation is still running... >> "%logFile%"
+    goto checkProcess
 )
 
-REM Log script completion
-echo Script completed successfully. >> "%logFile%"
+echo Uninstallation completed successfully. >> "%logFile%"
+exit /b
