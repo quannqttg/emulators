@@ -19,8 +19,8 @@ set "updateMumuDataUrl=https://raw.githubusercontent.com/quannqttg/emulators/mai
 set "updateMumuDataPath=C:\Users\%USERNAME%\Desktop\anime\update_mumu_data.bat"
 set "getUpdateConfigsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/update_configs.bat"
 set "getUpdateConfigsPath=C:\Users\%USERNAME%\Desktop\anime\update_configs.bat"
-set "getUninstallMuMuUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/uninstall_mumu.bat"
-set "getUninstallMuMuPath=C:\Users\%USERNAME%\Desktop\anime\uninstall_mumu.bat"
+set "getUninstallMuMuUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/uninstall.bat"
+set "getUninstallMuMuPath=C:\Users\%USERNAME%\Desktop\anime\uninstall.bat"
 
 
 :: Check for anime directory
@@ -290,30 +290,30 @@ if "%choice%"=="1" (
     )
     goto menu
 ) else if "%choice%"=="8" (
-    echo Downloading uninstall_mumu.bat...
+    echo Downloading uninstall.bat...
 
-    echo Downloading uninstall_mumu.bat...
+    echo Downloading uninstall.bat...
 	curl -L -o "%getUninstallMuMuPath%" "%getUninstallMuMuUrl%"
 
     :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Unable to download uninstall_mumu.bat.
+        echo Unable to download uninstall.bat.
     ) else (
-        echo uninstall_mumu.bat downloaded successfully: %getUninstallMuMuPath%
+        echo uninstall.bat downloaded successfully: %getUninstallMuMuPath%
         echo.
 
         :: Open a new window and run the downloaded file
-        echo Running uninstall_mumu.bat in a new window...
+        echo Running uninstall.bat in a new window...
         start cmd /c "%getUninstallMuMuPath% & echo update_configs.bat has completed. & pause"
 
         :: Wait for user confirmation before deleting the file
         pause
-        echo Deleting uninstall_mumu.bat...
+        echo Deleting uninstall.bat...
         del "%getUninstallMuMuPath%"
         if errorlevel 1 (
-            echo Unable to delete uninstall_mumu.bat.
+            echo Unable to delete uninstall.bat.
         ) else (
-            echo uninstall_mumu.bat has been deleted.
+            echo uninstall.bat has been deleted.
         )
     )
     goto menu
