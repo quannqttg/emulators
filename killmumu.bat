@@ -28,20 +28,35 @@ if errorlevel 1 (
     echo PowerShell is available. >> "%logFile%"
 )
 
-:askConfirmation
-:: Ask for user confirmation to proceed with file deletion and related tasks
-set /p confirm="Do you want to proceed with file deletion (y), skip to countdown and run autoRelaunch_mumu.bat (n), or exit (x)? (y/n/x): "
-if /i "%confirm%"=="y" goto proceed
-if /i "%confirm%"=="n" goto delayAndRun
-if /i "%confirm%"=="x" (
-    echo Exiting the script as per user request... >> "%logFile%"
-    exit /b
-)
-echo Invalid input. Please enter 'y', 'n', or 'x'.
-goto askConfirmation
+:menu
+cls
+echo.
+echo ===============================
+echo         MAIN MENU
+echo ===============================
+echo 1. Delete the files and proceed with the download
+echo 2. Skip deletion, run autoRelaunch_mumu.bat after countdown
+echo 3. Exit the script
+echo ===============================
+set /p choice="Please select an option (1-3): "
+
+if "%choice%"=="1" goto proceed
+if "%choice%"=="2" goto delayAndRun
+if "%choice%"=="3" goto exitScript
+echo Invalid choice. Please enter 1, 2, or 3.
+goto menu
 
 :proceed
-echo [DEBUG] Proceeding with file deletion and download... >> "%logFile%"
+echo [DEBUG] Proceeding with file deletion and Temp cleanup... >> "%logFile%"
+
+:: Delete all files in Temporary Files folder
+set "tempFolder=%temp%"
+echo Deleting all files in Temp folder... >> "%logFile%"
+echo Deleting all files in Temp folder...
+cd /d "%temp%"
+del /f /s /q *.* >nul 2>&1
+for /d %%i in (*) do rmdir /s /q "%%i" >> "%logFile%" 2>&1
+echo Temp folder cleaned. >> "%logFile%"
 
 :: Perform deletion of specific folders and files
 set "targetDir=C:\Program Files\Netease\MuMuPlayerGlobal-12.0\vms"
@@ -89,8 +104,8 @@ if errorlevel 1 (
 echo Download completed successfully! >> "%logFile%"
 echo Download completed successfully!
 
-:: Exit the CMD window after completing the y option
-exit /b 1
+:: Exit after processing
+goto end
 
 :delayAndRun
 :: Add a 10-second countdown before running autoRelaunch_mumu.bat
@@ -113,6 +128,10 @@ echo Running autoRelaunch_mumu.bat... >> "%logFile%"
 call autoRelaunch_mumu.bat || exit /b 1
 echo All operations completed successfully! >> "%logFile%"
 goto end
+
+:exitScript
+echo Exiting the script as per user request... >> "%logFile%"
+exit /b
 
 :end
 exit
