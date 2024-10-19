@@ -19,7 +19,8 @@ if not exist "C:\Users\%USERNAME%\Desktop\anime" (
 ) else (
     echo Anime directory exists. >> "%logFile%"
 )
-:menu
+
+::menu
 :: Display options to both the log file and the screen
 echo =======================
 echo 1. Get Device Key
@@ -28,8 +29,7 @@ echo 3. Exit
 echo =======================
 echo.
 
-:menu
-:: Display options
+:: Log the options
 echo ======================= >> "%logFile%"
 echo 1. Get Device Key >> "%logFile%"
 echo 2. Set Device Key >> "%logFile%"
