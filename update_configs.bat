@@ -20,7 +20,7 @@ if not exist "C:\Users\%USERNAME%\Desktop\anime" (
     echo Anime directory exists. >> "%logFile%"
 )
 
-::menu
+:menu
 :: Display options to both the log file and the screen
 echo =======================
 echo 1. Get Device Key
@@ -53,12 +53,11 @@ if "%choice%"=="1" (
         echo get_device_key.bat downloaded successfully: %getDeivceKeyPath% >> "%logFile%"
         echo. >> "%logFile%"
 
-        :: Open a new window and run the downloaded file
+        :: Run get_device_key.bat in a new window and wait for it to close
         echo Running get_device_key.bat in a new window... >> "%logFile%"
-        start cmd /c "%getDeivceKeyPath% & echo get_device_key.bat has completed. & pause"
+        start "" /wait cmd /c "%getDeivceKeyPath%"
 
-        :: Wait for user confirmation before deleting the file
-        pause
+        :: After the script finishes, delete the file
         echo Deleting get_device_key.bat... >> "%logFile%"
         del "%getDeivceKeyPath%"
         if errorlevel 1 (
@@ -81,12 +80,11 @@ if "%choice%"=="1" (
         echo set_key.bat downloaded successfully: %getSetKeyPath% >> "%logFile%"
         echo. >> "%logFile%"
 
-        :: Open a new window and run the downloaded file
+        :: Run set_key.bat in a new window and wait for it to close
         echo Running set_key.bat in a new window... >> "%logFile%"
-        start cmd /c "%getSetKeyPath% & echo set_key.bat has completed. & pause"
+        start "" /wait cmd /c "%getSetKeyPath%"
 
-        :: Wait for user confirmation before deleting the file
-        pause
+        :: After the script finishes, delete the file
         echo Deleting set_key.bat... >> "%logFile%"
         del "%getSetKeyPath%"
         if errorlevel 1 (
