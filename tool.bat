@@ -209,18 +209,14 @@ if "%choice%"=="1" (
     :: Download killmumu.bat
     curl -L -o "%killMumuPath%" "%killMumuUrl%"
     
-    :: Check if the file was downloaded successfully
     if errorlevel 1 (
         echo Unable to download killmumu.bat.
     ) else (
         echo killmumu.bat downloaded successfully: %killMumuPath%
-        echo.
         
-        :: Open a new window and run the downloaded file
         echo Running killmumu.bat in a new window...
         start cmd /k "%killMumuPath% & echo killmumu.bat has completed. & pause"
 
-        :: Wait for user confirmation before deleting the file
         pause
         echo Deleting killmumu.bat...
         del "%killMumuPath%"
