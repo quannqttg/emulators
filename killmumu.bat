@@ -40,9 +40,11 @@ echo 3. Exit the script
 echo ===============================
 set /p choice="Please select an option (1-3): "
 
-if "%choice%"=="1" goto proceed
-if "%choice%"=="2" goto delayAndRun
-if "%choice%"=="3" (
+if "%choice%"=="1" (
+    goto proceed
+) else if "%choice%"=="2" (
+    goto delayAndRun
+) else if "%choice%"=="3" (
     echo Exiting... >> "%logFile%"
     exit /b
 ) else (
