@@ -46,7 +46,6 @@ if "%choice%"=="1" (
     goto delayAndRun
 ) else if "%choice%"=="3" (
     echo Exiting... >> "%logFile%"
-    pause
     exit
 ) else (
     echo Invalid option, please try again. >> "%logFile%"
