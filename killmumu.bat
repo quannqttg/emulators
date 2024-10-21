@@ -133,4 +133,4 @@ goto menu
 
 :exitScript
 echo Exiting the script as per user request... >> "%logFile%"
-exit /b
+exit
