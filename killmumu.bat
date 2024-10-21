@@ -47,7 +47,7 @@ if "%choice%"=="1" (
 ) else if "%choice%"=="3" (
     echo Exiting... >> "%logFile%"
     pause
-    goto menu
+    exit /b
 ) else (
     echo Invalid option, please try again. >> "%logFile%"
     goto menu
