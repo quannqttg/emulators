@@ -70,27 +70,44 @@ set "targetDir=C:\Program Files\Netease\MuMuPlayerGlobal-12.0\vms"
 if exist "!targetDir!" (
     echo Deleting contents in "!targetDir!"... >> "%logFile%"
     echo Deleting contents in "!targetDir!"...
-    
+
     REM Loop through directories in the target directory
+    set "folderDeleted=0"
     for /d %%i in ("!targetDir!\*") do (
         if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-base" if /i not "%%~nxi"=="MuMuPlayerGlobal-12.0-0" (
             echo Deleting folder %%i... >> "%logFile%"
             echo Deleting folder %%i...
             rmdir /s /q "%%i"
             echo Deleted folder %%i >> "%logFile%"
+            set "folderDeleted=1"
+        ) else (
+            echo Folder %%i is protected and will not be deleted. >> "%logFile%"
         )
     )
     
     REM Loop through files in the target directory
+    set "fileDeleted=0"
     for %%i in ("!targetDir!\*") do (
         echo Deleting file %%i... >> "%logFile%"
         echo Deleting file %%i...
         del /q "%%i"
-        echo Deleted file %%i >> "%logFile%"
+        if errorlevel 1 (
+            echo Failed to delete file %%i. >> "%logFile%"
+        ) else (
+            echo Deleted file %%i >> "%logFile%"
+            set "fileDeleted=1"
+        )
+    )
+
+    if !folderDeleted! equ 0 (
+        echo No folders were deleted in "!targetDir!". >> "%logFile%"
+    )
+
+    if !fileDeleted! equ 0 (
+        echo No files were deleted in "!targetDir!". >> "%logFile%"
     )
 ) else (
-    echo Target directory does not exist. Exiting... >> "%logFile%"
-    exit /b 1
+    echo Target directory does not exist. Continuing without deletion... >> "%logFile%"
 )
 
 :: Download emulators.json file from GitHub
