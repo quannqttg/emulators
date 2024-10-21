@@ -104,8 +104,8 @@ if errorlevel 1 (
 echo Download completed successfully! >> "%logFile%"
 echo Download completed successfully!
 
-:: Exit after processing
-goto end
+:: Return to menu after processing
+goto menu
 
 :delayAndRun
 :: Add a 10-second countdown before running autoRelaunch_mumu.bat
@@ -127,11 +127,10 @@ if not exist "autoRelaunch_mumu.bat" (
 echo Running autoRelaunch_mumu.bat... >> "%logFile%"
 call autoRelaunch_mumu.bat || exit /b 1
 echo All operations completed successfully! >> "%logFile%"
-goto end
+
+:: Return to menu after running the batch file
+goto menu
 
 :exitScript
 echo Exiting the script as per user request... >> "%logFile%"
 exit /b
-
-:end
-exit
