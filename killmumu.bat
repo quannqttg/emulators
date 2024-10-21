@@ -42,9 +42,13 @@ set /p choice="Please select an option (1-3): "
 
 if "%choice%"=="1" goto proceed
 if "%choice%"=="2" goto delayAndRun
-if "%choice%"=="3" goto exitScript
-echo Invalid choice. Please enter 1, 2, or 3.
-goto menu
+if "%choice%"=="3" (
+    echo Exiting... >> "%logFile%"
+    exit /b
+) else (
+    echo Invalid option, please try again. >> "%logFile%"
+    goto menu
+)
 
 :proceed
 echo [DEBUG] Proceeding with file deletion and Temp cleanup... >> "%logFile%"
