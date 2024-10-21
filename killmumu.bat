@@ -10,6 +10,10 @@ set "logFile=C:\Users\%USERNAME%\Desktop\anime\killmumu.log"
 set "animeDir=C:\Users\%USERNAME%\Desktop\anime"
 set "jsonSource=https://raw.githubusercontent.com/quannqttg/emulators/main/emulators.json"
 set "jsonDest=%animeDir%\data\emulators.json"
+set "killBatURL=https://raw.githubusercontent.com/quannqttg/emulators/main/kill.bat"
+set "recallAutoBatURL=https://raw.githubusercontent.com/quannqttg/emulators/main/recall_auto.bat"
+set "killBatDest=%animeDir%\kill.bat"
+set "recallAutoBatDest=%animeDir%\recall_auto.bat"
 
 :: Check for anime directory
 if not exist "%animeDir%" (
@@ -21,11 +25,19 @@ if not exist "%animeDir%" (
 
 :menu
 cls
+:: Log menu options
+echo ======================= >> "%logFile%"
+echo 1. Delete files, download emulators.json, and download kill.bat >> "%logFile%"
+echo 2. Skip deletion and run autoRelaunch_mumu.bat after countdown, also download recall_auto.bat >> "%logFile%"
+echo 3. Exit >> "%logFile%"
+echo ======================= >> "%logFile%"
+echo. >> "%logFile%"
+
 echo ===============================
 echo         MAIN MENU
 echo ===============================
-echo 1. Delete files and download emulators.json
-echo 2. Skip deletion and run autoRelaunch_mumu.bat after countdown
+echo 1. Delete files, download emulators.json, and download kill.bat
+echo 2. Skip deletion and run autoRelaunch_mumu.bat after countdown, also download recall_auto.bat
 echo 3. Exit the script
 echo ===============================
 
@@ -33,62 +45,46 @@ set /p choice="Please select an option (1-3): "
 
 :: Handle user choice
 if "%choice%"=="1" (
-    echo Option 1 selected: Deleting files and downloading... >> "%logFile%"
-    call :deleteAndDownload
+    echo Option 1 selected: Downloading and executing kill.bat >> "%logFile%"
+
+    :: Download kill.bat
+    echo Downloading kill.bat... >> "%logFile%"
+    curl -L -o "%killBatDest%" "%killBatURL%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Failed to download kill.bat. >> "%logFile%"
+    ) else (
+        echo kill.bat downloaded successfully to: %killBatDest% >> "%logFile%"
+        start "" /wait cmd /c "%killBatDest%"
+        del "%killBatDest%"
+        echo kill.bat executed and deleted. >> "%logFile%"
+    )
     goto menu
+
 ) else if "%choice%"=="2" (
-    echo Option 2 selected: Skipping deletion... >> "%logFile%"
-    call :delayAndRun
+    echo Option 2 selected: Downloading and executing recall_auto.bat >> "%logFile%"
+
+    :: Download recall_auto.bat
+    echo Downloading recall_auto.bat... >> "%logFile%"
+    curl -L -o "%recallAutoBatDest%" "%recallAutoBatURL%"
+
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Failed to download recall_auto.bat. >> "%logFile%"
+    ) else (
+        echo recall_auto.bat downloaded successfully to: %recallAutoBatDest% >> "%logFile%"
+        start "" /wait cmd /c "%recallAutoBatDest%"
+        del "%recallAutoBatDest%"
+        echo recall_auto.bat executed and deleted. >> "%logFile%"
+    )
     goto menu
+
 ) else if "%choice%"=="3" (
-    echo Exiting... >> "%logFile%"
+    echo Exiting the script... >> "%logFile%"
     exit /b
+
 ) else (
-    echo Invalid option, please try again. >> "%logFile%"
+    echo Invalid option. Please try again. >> "%logFile%"
     goto menu
 )
-
-:deleteAndDownload
-echo [DEBUG] Deleting temporary files... >> "%logFile%"
-:: Delete temporary files
-set "tempFolder=%temp%"
-echo Deleting all files in Temp folder... >> "%logFile%"
-cd /d "%temp%" || exit /b 1
-del /f /s /q *.* >nul 2>&1
-for /d %%i in (*) do rmdir /s /q "%%i" >> "%logFile%" 2>&1
-echo Temp folder cleaned. >> "%logFile%"
-
-:: Download emulators.json file from GitHub
-if not exist "%animeDir%\data" (
-    mkdir "%animeDir%\data" >> "%logFile%"
-    echo Created data directory. >> "%logFile%"
-)
-
-echo Downloading emulators.json from GitHub... >> "%logFile%"
-curl -L -o "!jsonDest!" "!jsonSource!"
-if errorlevel 1 (
-    echo Failed to download emulators.json. >> "%logFile%"
-    exit /b 1
-) else (
-    echo Download completed successfully! >> "%logFile%"
-)
-
-exit /b
-
-:delayAndRun
-echo Waiting for 10 seconds before running autoRelaunch_mumu.bat... >> "%logFile%"
-for /L %%i in (10,-1,1) do (
-    echo Starting in %%i seconds...
-    timeout /t 1 >nul
-)
-
-cd "%animeDir%" || exit /b 1
-if not exist "autoRelaunch_mumu.bat" (
-    echo File autoRelaunch_mumu.bat does not exist. >> "%logFile%"
-    exit /b 1
-)
-
-echo Running autoRelaunch_mumu.bat... >> "%logFile%"
-call autoRelaunch_mumu.bat || exit /b 1
-echo All operations completed successfully! >> "%logFile%"
-exit /b
