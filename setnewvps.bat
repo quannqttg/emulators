@@ -145,6 +145,10 @@ if exist "!animeDir!" (
     echo User directory "!userDir!" does not exist or Desktop\anime not found. Skipping to next user... >> "!logFile!"
 )
 
+:: Enable Scheduled Task History
+echo Enabling history for all scheduled tasks... >> "!logFile!"
+powershell -Command "Enable-ScheduledTaskLog"
+
 :SkipToNext
 echo Script execution completed on %date% %time% >> "!logFile!"
 endlocal
