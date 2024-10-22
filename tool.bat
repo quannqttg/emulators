@@ -215,7 +215,7 @@ if "%choice%"=="1" (
         echo killmumu.bat downloaded successfully: %killMumuPath%
         
         echo Running killmumu.bat in a new window...
-        start cmd /k "%killMumuPath% & echo killmumu.bat has completed. & pause"
+        start cmd /c "%killMumuPath% & echo killmumu.bat has completed. & pause"
 
         pause
         echo Deleting killmumu.bat...
