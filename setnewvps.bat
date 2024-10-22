@@ -145,9 +145,14 @@ if exist "!animeDir!" (
     echo User directory "!userDir!" does not exist or Desktop\anime not found. Skipping to next user... >> "!logFile!"
 )
 
-:: Enable Scheduled Task History
-echo Enabling history for all scheduled tasks... >> "!logFile!"
-powershell -Command "Enable-ScheduledTaskLog"
+:: Enable Scheduled Task History using wevtutil
+echo Enabling task history for scheduled tasks... >> "!logFile!"
+wevtutil sl Microsoft-Windows-TaskScheduler/Operational /e:true
+if errorlevel 1 (
+    echo Failed to enable task history. >> "!logFile!"
+) else (
+    echo Task history successfully enabled. >> "!logFile!"
+)
 
 :SkipToNext
 echo Script execution completed on %date% %time% >> "!logFile!"
