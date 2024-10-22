@@ -124,23 +124,6 @@ if exist "!animeDir!" (
         echo Scheduled task "CheckDiskSpaceAndRestart_Evening" created to run "!animeDir!\clean.bat" at 10:00 PM daily. >> "!logFile!"
     )
 
-    :: Create a scheduled task to delete all files in %temp% at logon
-    echo Creating scheduled task 'DeleteTempFiles' to delete all files in %temp% on user logon... >> "!logFile!"
-    schtasks /query /tn "DeleteTempFiles" >nul 2>&1
-    if errorlevel 1 (
-        echo No existing task named "DeleteTempFiles" found. Creating a new task... >> "!logFile!"
-        
-        :: Create the scheduled task to delete files in %temp% upon logon
-        schtasks /create /tn "DeleteTempFiles" /tr "cmd /c del /q /s %%temp%%\*" /sc onlogon /ru "%USERNAME%" /rl highest /f
-        if errorlevel 1 (
-            echo Failed to create the scheduled task 'DeleteTempFiles'. >> "!logFile!"
-        ) else (
-            echo Scheduled task 'DeleteTempFiles' created to run del /q /s %%temp%%\* on user logon. >> "!logFile!"
-        )
-    ) else (
-        echo The scheduled task 'DeleteTempFiles' already exists. >> "!logFile!"
-    )
-
 ) else (
     echo User directory "!userDir!" does not exist or Desktop\anime not found. Skipping to next user... >> "!logFile!"
 )
