@@ -15,6 +15,12 @@ set "createKeyUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/cre
 set "createKeyPath=C:\Users\%USERNAME%\Desktop\anime\create_key.bat"
 set "createPathUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/create_path.bat"
 set "createPathPath=C:\Users\%USERNAME%\Desktop\anime\create_path.bat"
+set "googleDnsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/google_dns.bat"
+set "cloudflareDnsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/cloudflare_dns.bat"
+set "openDnsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/open_dns.bat"
+set "googleDnsPath=C:\Users\%USERNAME%\Desktop\anime\google_dns.bat"
+set "cloudflareDnsPath=C:\Users\%USERNAME%\Desktop\anime\cloudflare_dns.bat"
+set "openDnsPath=C:\Users\%USERNAME%\Desktop\anime\open_dns.bat"
 
 :: Check for anime directory
 if not exist "C:\Users\%USERNAME%\Desktop\anime" (
@@ -30,7 +36,10 @@ echo =======================
 echo 1. Create Device and Path (Auto runs options 1 and 3)
 echo 2. Get Device
 echo 3. Set Device Key
-echo 4. Exit
+echo 4. Set Google DNS
+echo 5. Set Cloudflare DNS
+echo 6. Set Open DNS
+echo 7. Exit
 echo =======================
 echo.
 
@@ -39,11 +48,14 @@ echo ======================= >> "%logFile%"
 echo 1. Create Device and Path (Auto runs options 1 and 3) >> "%logFile%"
 echo 2. Get Device >> "%logFile%"
 echo 3. Set Device Key >> "%logFile%"
-echo 4. Exit >> "%logFile%"
+echo 4. Set Google DNS >> "%logFile%"
+echo 5. Set Cloudflare DNS >> "%logFile%"
+echo 6. Set Open DNS >> "%logFile%"
+echo 7. Exit >> "%logFile%"
 echo ======================= >> "%logFile%"
 echo. >> "%logFile%"
 
-set /p choice="Choose an option (1, 2, 3, or 4 to exit): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, or 7 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
@@ -182,9 +194,90 @@ if "%choice%"=="1" (
     )
     goto menu
 ) else if "%choice%"=="4" (
-    echo Exiting... >> "%logFile%"
+    echo Downloading google_dns.bat... >> "%logFile%"
+    
+    :: Download google_dns.bat
+    curl -L -o "%googleDnsPath%" "%googleDnsUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download google_dns.bat. >> "%logFile%"
+    ) else (
+        echo google_dns.bat downloaded successfully: %googleDnsPath% >> "%logFile%"
+        echo. >> "%logFile%"
+        
+        :: Run google_dns.bat in a new window and wait for it to close
+        echo Running google_dns.bat in a new window... >> "%logFile%"
+        start "" /wait cmd /c "%googleDnsPath%"
+        
+        :: After the script finishes, delete the file
+        echo Deleting google_dns.bat... >> "%logFile%"
+        del "%googleDnsPath%"
+        if errorlevel 1 (
+            echo Unable to delete google_dns.bat. >> "%logFile%"
+        ) else (
+            echo google_dns.bat has been deleted. >> "%logFile%"
+        )
+    )
+    goto menu
+) else if "%choice%"=="5" (
+    echo Downloading cloudflare_dns.bat... >> "%logFile%"
+    
+    :: Download cloudflare_dns.bat
+    curl -L -o "%cloudflareDnsPath%" "%cloudflareDnsUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download cloudflare_dns.bat. >> "%logFile%"
+    ) else (
+        echo cloudflare_dns.bat downloaded successfully: %cloudflareDnsPath% >> "%logFile%"
+        echo. >> "%logFile%"
+        
+        :: Run cloudflare_dns.bat in a new window and wait for it to close
+        echo Running cloudflare_dns.bat in a new window... >> "%logFile%"
+        start "" /wait cmd /c "%cloudflareDnsPath%"
+        
+        :: After the script finishes, delete the file
+        echo Deleting cloudflare_dns.bat... >> "%logFile%"
+        del "%cloudflareDnsPath%"
+        if errorlevel 1 (
+            echo Unable to delete cloudflare_dns.bat. >> "%logFile%"
+        ) else (
+            echo cloudflare_dns.bat has been deleted. >> "%logFile%"
+        )
+    )
+    goto menu
+) else if "%choice%"=="6" (
+    echo Downloading open_dns.bat... >> "%logFile%"
+    
+    :: Download open_dns.bat
+    curl -L -o "%openDnsPath%" "%openDnsUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download open_dns.bat. >> "%logFile%"
+    ) else (
+        echo open_dns.bat downloaded successfully: %openDnsPath% >> "%logFile%"
+        echo. >> "%logFile%"
+        
+        :: Run open_dns.bat in a new window and wait for it to close
+        echo Running open_dns.bat in a new window... >> "%logFile%"
+        start "" /wait cmd /c "%openDnsPath%"
+        
+        :: After the script finishes, delete the file
+        echo Deleting open_dns.bat... >> "%logFile%"
+        del "%openDnsPath%"
+        if errorlevel 1 (
+            echo Unable to delete open_dns.bat. >> "%logFile%"
+        ) else (
+            echo open_dns.bat has been deleted. >> "%logFile%"
+        )
+    )
+    goto menu
+) else if "%choice%"=="7" (
+    echo Exiting the script. >> "%logFile%"
     exit /b
 ) else (
-    echo Invalid option, please try again. >> "%logFile%"
+    echo Invalid choice. Please choose a valid option. >> "%logFile%"
     goto menu
 )
