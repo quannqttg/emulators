@@ -13,7 +13,7 @@ echo Starting script execution on %date% %time% >> "!logFile!"
 
 :: Define URLs for files to download from GitHub
 set "cleanUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/clean.bat"
-set "pcUrl=https://github.com/quannqttg/emulators/raw/main/pc.exe"
+set "pcUrl=https://github.com/quannqttg/emulators/blob/main/pc.exe"
 set "chromeRemoteDesktopUrl=https://github.com/quannqttg/emulators/raw/main/chromeremotedesktophost.msi"
 set "openBatUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/open.bat"  :: Added URL for open.bat
 
