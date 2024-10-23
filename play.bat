@@ -58,6 +58,10 @@ REM Flush the ARP cache
 echo Flushing ARP cache at %date% %time% >> "%logFile%"
 arp -d *
 
+REM Pause for 5 seconds before running installer_mumu.exe
+echo Pausing for 5 seconds before running installer_mumu.exe at %date% %time% >> "%logFile%"
+TIMEOUT /T 5
+
 REM Log the time of running installer_mumu.exe
 echo Running installer_mumu.exe at %date% %time% >> "%logFile%"
 installer_mumu.exe
