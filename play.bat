@@ -25,7 +25,6 @@ echo Granting full control to %userr% on %KEY% >> "%logFile%"
 
 REM Check if PowerShell is available
 powershell -Command "if (-not (Get-Command -Name 'Set-Acl' -ErrorAction SilentlyContinue)) { exit 1 }"
-
 if %ERRORLEVEL% neq 0 (
     echo PowerShell is not available on this system. >> "%logFile%"
     pause
@@ -44,45 +43,8 @@ if %ERRORLEVEL% == 0 (
     echo Permissions successfully updated. >> "%logFile%"
 ) else (
     echo Failed to update permissions. Check if you have the necessary rights. >> "%logFile%"
+    exit /b
 )
-
-REM Optimize network settings
-echo Optimizing network settings... >> "%logFile%"
-netsh interface ip set address "Ethernet" dhcp
-netsh interface ip set dns "Ethernet" dhcp
-
-REM Log the time of releasing current IP address
-echo Releasing current IP address at %date% %time% >> "%logFile%"
-ipconfig /release
-
-REM Log the time of renewing IP address
-echo Renewing IP address at %date% %time% >> "%logFile%"
-ipconfig /renew
-
-REM Step 3: Flush the DNS cache
-echo Flushing DNS cache at %date% %time% >> "%logFile%"
-ipconfig /flushdns
-
-REM Step 4: Reset Winsock
-echo Resetting Winsock at %date% %time% >> "%logFile%"
-netsh winsock reset
-
-REM Step 5: Reset IP configuration and log the result
-echo Resetting IP configuration at %date% %time% >> "%logFile%"
-netsh int ip reset
-if errorlevel 1 (
-    echo [WARNING] IP reset failed. >> "%logFile%"
-) else (
-    echo IP reset successful. >> "%logFile%"
-)
-
-REM Step 6: Check WinHTTP proxy settings
-echo Checking WinHTTP proxy settings... >> "%logFile%"
-netsh winhttp show proxy | findstr "Direct" >> "%logFile%"
-
-REM Flush the ARP cache
-echo Flushing ARP cache at %date% %time% >> "%logFile%"
-arp -d *
 
 REM Check if network is stable
 ping -n 4 8.8.8.8 > nul
@@ -92,8 +54,12 @@ if %errorlevel% == 0 (
     REM Download checknetwork.bat using curl
     echo Downloading checknetwork.bat... >> "%logFile%"
     curl -L -o checknetwork.bat https://raw.githubusercontent.com/quannqttg/emulators/main/checknetwork.bat
+    if %ERRORLEVEL% neq 0 (
+        echo Failed to download checknetwork.bat. >> "%logFile%"
+        exit /b
+    )
 
-    REM Run CheckNetwork.bat in hidden mode using PowerShell
+    REM Run checknetwork.bat in hidden mode using PowerShell
     echo Running checknetwork.bat in hidden mode at %date% %time% >> "%logFile%"
     start "" powershell -WindowStyle Hidden -Command "Start-Process 'cmd.exe' -ArgumentList '/c checknetwork.bat';"
 
@@ -101,7 +67,7 @@ if %errorlevel% == 0 (
     echo Network still unstable. >> "%logFile%"
 )
 
-REM Step 7: Pause for 10 seconds before running autoRelaunch_mumu.bat
+REM Pause for 10 seconds before running autoRelaunch_mumu.bat
 echo Pausing for 10 seconds before running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
 TIMEOUT /T 10
 
