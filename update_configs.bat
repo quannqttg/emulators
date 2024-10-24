@@ -1,3 +1,4 @@
+
 @echo off
 setlocal
 
@@ -21,6 +22,13 @@ set "openDnsUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/open_
 set "googleDnsPath=C:\Users\%USERNAME%\Desktop\anime\google_dns.bat"
 set "cloudflareDnsPath=C:\Users\%USERNAME%\Desktop\anime\cloudflare_dns.bat"
 set "openDnsPath=C:\Users\%USERNAME%\Desktop\anime\open_dns.bat"
+set "runresetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/run_reset_network.ps1"
+set "runresetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\run_reset_network.ps1"
+set "resetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/reset_network.bat"
+set "resetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\reset_network.bat"
+
+
+
 
 :: Check for anime directory
 if not exist "C:\Users\%USERNAME%\Desktop\anime" (
@@ -39,7 +47,8 @@ echo 3. Set Device Key
 echo 4. Set Google DNS
 echo 5. Set Cloudflare DNS
 echo 6. Set Open DNS
-echo 7. Exit
+echo 7. Reset Network
+echo 8. Exit
 echo =======================
 echo.
 
@@ -51,11 +60,12 @@ echo 3. Set Device Key >> "%logFile%"
 echo 4. Set Google DNS >> "%logFile%"
 echo 5. Set Cloudflare DNS >> "%logFile%"
 echo 6. Set Open DNS >> "%logFile%"
-echo 7. Exit >> "%logFile%"
+echo 7. Reset Network >> "%logFile%"
+echo 8. Exit >> "%logFile%"
 echo ======================= >> "%logFile%"
 echo. >> "%logFile%"
 
-set /p choice="Choose an option (1, 2, 3, 4, 5, 6, or 7 to exit): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, or 8 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
@@ -275,6 +285,47 @@ if "%choice%"=="1" (
     )
     goto menu
 ) else if "%choice%"=="7" (
+    echo Downloading run_reset_network.ps1... >> "%logFile%"
+echo Downloading reset_network.bat... >> "%logFile%"
+    
+:: Download run_reset_network.ps1
+curl -L -o "%runresetnetworkPath%" "%runresetnetworkUrl%"
+
+:: Download reset_network.bat
+curl -L -o "%resetnetworkPath%" "%resetnetworkUrl%"
+
+:: Check if the files were downloaded successfully
+if errorlevel 1 (
+    echo Unable to download run_reset_network.ps1. >> "%logFile%"
+) else (
+    echo run_reset_network.ps1 downloaded successfully: %runresetnetworkPath% >> "%logFile%"
+    echo. >> "%logFile%"
+    
+    :: Run run_reset_network.ps1 using PowerShell and wait for it to close
+    echo Running run_reset_network.ps1 in a new window... >> "%logFile%"
+    start "" /wait powershell.exe -ExecutionPolicy Bypass -File "%runresetnetworkPath%"
+    
+    :: After the script finishes, delete the PowerShell script
+    echo Deleting run_reset_network.ps1... >> "%logFile%"
+    del "%runresetnetworkPath%"
+    if errorlevel 1 (
+        echo Unable to delete run_reset_network.ps1. >> "%logFile%"
+    ) else (
+        echo run_reset_network.ps1 has been deleted. >> "%logFile%"
+    )
+    
+    :: Delete reset_network.bat
+    echo Deleting reset_network.bat... >> "%logFile%"
+    del "%resetnetworkPath%"
+    if errorlevel 1 (
+        echo Unable to delete reset_network.bat. >> "%logFile%"
+    ) else (
+        echo reset_network.bat has been deleted. >> "%logFile%"
+    )
+)
+
+goto menu
+) else if "%choice%"=="8" (
     echo Exiting the script. >> "%logFile%"
     exit /b
 ) else (
