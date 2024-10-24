@@ -109,6 +109,6 @@ REM Log the time of running autoRelaunch_mumu.bat
 echo Running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
 start cmd /c "autoRelaunch_mumu.bat"
 
-REM End of script and close pc.bat
+REM End of script and close play.bat
 echo Script completed at %date% %time% >> "%logFile%"
 exit /b
