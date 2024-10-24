@@ -48,21 +48,29 @@ REM Start infinite loop for Step 7
 :Start
 echo Starting Step 7 >> "%logFile%"
 
-REM Step 3: Flush DNS cache
+REM Optimize network settings by using DHCP for IP and DNS
+echo Optimizing network settings... >> "%logFile%"
+netsh interface ip set address "Ethernet" dhcp
+netsh interface ip set dns "Ethernet" dhcp
+
+REM Log the time of releasing current IP address
+echo Releasing current IP address at %date% %time% >> "%logFile%"
+ipconfig /release
+
+REM Log the time of renewing IP address
+echo Renewing IP address at %date% %time% >> "%logFile%"
+ipconfig /renew
+
+REM Step 3: Flush the DNS cache
 echo Flushing DNS cache at %date% %time% >> "%logFile%"
 ipconfig /flushdns
 
 REM Step 4: Reset Winsock
-echo Resetting Winsock... >> "%logFile%"
+echo Resetting Winsock at %date% %time% >> "%logFile%"
 netsh winsock reset
-if errorlevel 1 (
-    echo [WARNING] Winsock reset failed. Access denied or another issue. >> "%logFile%"
-) else (
-    echo Winsock reset completed. A restart may be required. >> "%logFile%"
-)
 
 REM Step 5: Reset IP configuration and log the result
-echo Resetting IP configuration... >> "%logFile%"
+echo Resetting IP configuration at %date% %time% >> "%logFile%"
 netsh int ip reset
 if errorlevel 1 (
     echo [WARNING] IP reset failed. >> "%logFile%"
@@ -73,6 +81,10 @@ if errorlevel 1 (
 REM Step 6: Check WinHTTP proxy settings
 echo Checking WinHTTP proxy settings... >> "%logFile%"
 netsh winhttp show proxy | findstr "Direct" >> "%logFile%"
+
+REM Flush the ARP cache
+echo Flushing ARP cache at %date% %time% >> "%logFile%"
+arp -d *
 
 REM Check if network is stable
 ping -n 4 8.8.8.8 > nul
