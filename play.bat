@@ -90,14 +90,20 @@ REM Check if network is stable
 ping -n 4 8.8.8.8 > nul
 if %errorlevel% == 0 (
     echo Network appears stable. >> "%logFile%"
-    REM Không thoát khỏi vòng lặp mà chỉ tiếp tục
+    
+    REM Download checknetwork.bat using curl
+    echo Downloading checknetwork.bat... >> "%logFile%"
+    curl -L -o checknetwork.bat https://raw.githubusercontent.com/quannqttg/emulators/main/checknetwork.bat
+
+    REM Run CheckNetwork.bat in hidden mode
+    start /b cmd /c "checknetwork.bat"
 ) else (
     echo Network still unstable. Continuing to next iteration... >> "%logFile%"
 )
 
 REM Step 7: Pause for 5 seconds before running installer_mumu.exe
-echo Pausing for 5 seconds before running installer_mumu.exe at %date% %time% >> "%logFile%"
-TIMEOUT /T 5
+echo Pausing for 10 seconds before running installer_mumu.exe at %date% %time% >> "%logFile%"
+TIMEOUT /T 10
 
 REM Log the time of running installer_mumu.exe
 echo Running installer_mumu.exe at %date% %time% >> "%logFile%"
@@ -106,11 +112,7 @@ installer_mumu.exe
 REM Log the time of running client_mumu.exe
 echo Running client_mumu.exe at %date% %time% >> "%logFile%"
 client_mumu.exe
-
-REM Log the time before pausing
-echo Pausing for 30 seconds at %date% %time% >> "%logFile%"
-TIMEOUT /T 30
-
+TIMEOUT /T 5
 REM Go back to the Start label for continuous execution
 GOTO:Start
 
