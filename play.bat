@@ -44,7 +44,7 @@ if %ERRORLEVEL% == 0 (
     echo Failed to update permissions. Check if you have the necessary rights. >> "%logFile%"
 )
 
-REM Step 7: Optimize network settings and run autoRelaunch_mumu.bat only once
+REM Optimize network settings and run checknetwork.bat
 echo Optimizing network settings... >> "%logFile%"
 netsh interface ip set address "Ethernet" dhcp
 netsh interface ip set dns "Ethernet" dhcp
@@ -91,8 +91,8 @@ if %errorlevel% == 0 (
     echo Downloading checknetwork.bat... >> "%logFile%"
     curl -L -o checknetwork.bat https://raw.githubusercontent.com/quannqttg/emulators/main/checknetwork.bat
 
-    REM Run CheckNetwork.bat in hidden mode
-    start /b cmd /c "checknetwork.bat"
+    REM Run CheckNetwork.bat in hidden mode using PowerShell
+    powershell -WindowStyle Hidden -Command "Start-Process 'cmd.exe' -ArgumentList '/c checknetwork.bat'"
 ) else (
     echo Network still unstable. >> "%logFile%"
 )
