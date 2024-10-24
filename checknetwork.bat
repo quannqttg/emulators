@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM Set log file name
-set "logFile=play.log"
+set "logFile=checknetwork.log"
 
 REM Set user variable to the current username
 set "userr=%USERNAME%"
