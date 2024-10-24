@@ -13,7 +13,7 @@ if %errorlevel% neq 0 (
     echo [DEBUG] No admin privileges detected. Requesting administrative privileges...
     echo Requesting administrative privileges... >> "%logFile%"
     powershell -command "Start-Process cmd -ArgumentList '/c %~f0' -Verb RunAs"
-    exit /b
+    echo [WARNING] Unable to acquire admin privileges, continuing without them. >> "%logFile%"
 ) else (
     echo [DEBUG] Admin privileges confirmed.
     echo Admin privileges confirmed. >> "%logFile%"
