@@ -31,7 +31,7 @@ if %ERRORLEVEL% neq 0 (
 )
 
 REM Use PowerShell to set permissions on the registry key
-powershell -Command ^
+powershell -Command ^ 
     "$path = 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters'; " ^
     "$acl = Get-Acl -Path $path; " ^
     "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%USER%', 'FullControl', 'Allow'); " ^
@@ -101,18 +101,14 @@ if %errorlevel% == 0 (
     echo Network still unstable. Continuing to next iteration... >> "%logFile%"
 )
 
-REM Step 7: Pause for 5 seconds before running installer_mumu.exe
-echo Pausing for 10 seconds before running installer_mumu.exe at %date% %time% >> "%logFile%"
+REM Step 7: Pause for 10 seconds before running autoRelaunch_mumu.bat
+echo Pausing for 10 seconds before running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
 TIMEOUT /T 10
 
-REM Log the time of running installer_mumu.exe
-echo Running installer_mumu.exe at %date% %time% >> "%logFile%"
-installer_mumu.exe
+REM Log the time of running autoRelaunch_mumu.bat
+echo Running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
+start cmd /c "autoRelaunch_mumu.bat"
 
-REM Log the time of running client_mumu.exe
-echo Running client_mumu.exe at %date% %time% >> "%logFile%"
-client_mumu.exe
-TIMEOUT /T 5
 REM Go back to the Start label for continuous execution
 GOTO:Start
 
