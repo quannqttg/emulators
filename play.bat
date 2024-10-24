@@ -1,10 +1,12 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM Set user variable to the current username
+set "userr=%USERNAME%"
+
 REM Set log file name
 set "logFile=play.log"
 SET KEY="HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters"
-SET "USER=cc"
 
 REM Step 1: Check for administrative privileges
 net session >nul 2>&1
@@ -19,7 +21,7 @@ if %errorlevel% neq 0 (
 )
 
 REM Step 2: Grant full control permission on the registry key
-echo Granting full control to %USER% on %KEY% >> "%logFile%"
+echo Granting full control to %userr% on %KEY% >> "%logFile%"
 
 REM Check if PowerShell is available
 powershell -Command "if (-not (Get-Command -Name 'Set-Acl' -ErrorAction SilentlyContinue)) { exit 1 }"
@@ -34,7 +36,7 @@ REM Use PowerShell to set permissions on the registry key
 powershell -Command ^ 
     "$path = 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters'; " ^ 
     "$acl = Get-Acl -Path $path; " ^ 
-    "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%USER%', 'FullControl', 'Allow'); " ^ 
+    "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%userr%', 'FullControl', 'Allow'); " ^ 
     "$acl.AddAccessRule($accessRule); " ^ 
     "Set-Acl -Path $path -AclObject $acl;"
 
@@ -44,7 +46,7 @@ if %ERRORLEVEL% == 0 (
     echo Failed to update permissions. Check if you have the necessary rights. >> "%logFile%"
 )
 
-REM Optimize network settings and run checknetwork.bat
+REM Optimize network settings
 echo Optimizing network settings... >> "%logFile%"
 netsh interface ip set address "Ethernet" dhcp
 netsh interface ip set dns "Ethernet" dhcp
@@ -92,7 +94,9 @@ if %errorlevel% == 0 (
     curl -L -o checknetwork.bat https://raw.githubusercontent.com/quannqttg/emulators/main/checknetwork.bat
 
     REM Run CheckNetwork.bat in hidden mode using PowerShell
-    powershell -WindowStyle Hidden -Command "Start-Process 'cmd.exe' -ArgumentList '/c checknetwork.bat'"
+    echo Running checknetwork.bat in hidden mode at %date% %time% >> "%logFile%"
+    start "" powershell -WindowStyle Hidden -Command "Start-Process 'cmd.exe' -ArgumentList '/c checknetwork.bat';"
+
 ) else (
     echo Network still unstable. >> "%logFile%"
 )
@@ -105,8 +109,6 @@ REM Log the time of running autoRelaunch_mumu.bat
 echo Running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
 start cmd /c "autoRelaunch_mumu.bat"
 
-REM End of script
+REM End of script and close pc.bat
 echo Script completed at %date% %time% >> "%logFile%"
-echo Press any key to exit...
-pause > nul
-endlocal
+exit /b
