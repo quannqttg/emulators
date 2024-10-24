@@ -20,32 +20,6 @@ if %errorlevel% neq 0 (
     echo Admin privileges confirmed. >> "%logFile%"
 )
 
-REM Step 2: Grant full control permission on the registry key
-echo Granting full control to %userr% on %KEY% >> "%logFile%"
-
-REM Check if PowerShell is available
-powershell -Command "if (-not (Get-Command -Name 'Set-Acl' -ErrorAction SilentlyContinue)) { exit 1 }"
-if %ERRORLEVEL% neq 0 (
-    echo PowerShell is not available on this system. >> "%logFile%"
-    pause
-    exit /b
-)
-
-REM Use PowerShell to set permissions on the registry key
-powershell -Command ^ 
-    "$path = 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters'; " ^ 
-    "$acl = Get-Acl -Path $path; " ^ 
-    "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%userr%', 'FullControl', 'Allow'); " ^ 
-    "$acl.AddAccessRule($accessRule); " ^ 
-    "Set-Acl -Path $path -AclObject $acl;"
-
-if %ERRORLEVEL% == 0 (
-    echo Permissions successfully updated. >> "%logFile%"
-) else (
-    echo Failed to update permissions. Check if you have the necessary rights. >> "%logFile%"
-    exit /b
-)
-
 REM Check if network is stable
 ping -n 4 8.8.8.8 > nul
 if %errorlevel% == 0 (
