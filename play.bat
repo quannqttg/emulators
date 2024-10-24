@@ -32,10 +32,10 @@ if %ERRORLEVEL% neq 0 (
 
 REM Use PowerShell to set permissions on the registry key
 powershell -Command ^ 
-    "$path = 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters'; " ^
-    "$acl = Get-Acl -Path $path; " ^
-    "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%USER%', 'FullControl', 'Allow'); " ^
-    "$acl.AddAccessRule($accessRule); " ^
+    "$path = 'Registry::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters'; " ^ 
+    "$acl = Get-Acl -Path $path; " ^ 
+    "$accessRule = New-Object System.Security.AccessControl.RegistryAccessRule('%USER%', 'FullControl', 'Allow'); " ^ 
+    "$acl.AddAccessRule($accessRule); " ^ 
     "Set-Acl -Path $path -AclObject $acl;"
 
 if %ERRORLEVEL% == 0 (
@@ -44,11 +44,7 @@ if %ERRORLEVEL% == 0 (
     echo Failed to update permissions. Check if you have the necessary rights. >> "%logFile%"
 )
 
-REM Start infinite loop for Step 7
-:Start
-echo Starting Step 7 >> "%logFile%"
-
-REM Optimize network settings by using DHCP for IP and DNS
+REM Step 7: Optimize network settings and run autoRelaunch_mumu.bat only once
 echo Optimizing network settings... >> "%logFile%"
 netsh interface ip set address "Ethernet" dhcp
 netsh interface ip set dns "Ethernet" dhcp
@@ -98,7 +94,7 @@ if %errorlevel% == 0 (
     REM Run CheckNetwork.bat in hidden mode
     start /b cmd /c "checknetwork.bat"
 ) else (
-    echo Network still unstable. Continuing to next iteration... >> "%logFile%"
+    echo Network still unstable. >> "%logFile%"
 )
 
 REM Step 7: Pause for 10 seconds before running autoRelaunch_mumu.bat
@@ -109,10 +105,7 @@ REM Log the time of running autoRelaunch_mumu.bat
 echo Running autoRelaunch_mumu.bat at %date% %time% >> "%logFile%"
 start cmd /c "autoRelaunch_mumu.bat"
 
-REM Go back to the Start label for continuous execution
-GOTO:Start
-
-:EOF
+REM End of script
 echo Script completed at %date% %time% >> "%logFile%"
 echo Press any key to exit...
 pause > nul
