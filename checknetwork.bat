@@ -3,7 +3,9 @@ setlocal enabledelayedexpansion
 
 REM Set log file name
 set "logFile=play.log"
-set "USER=cc"
+
+REM Set user variable to the current username
+set "userr=%USERNAME%"
 
 REM Step 1: Check for administrative privileges
 net session >nul 2>&1
