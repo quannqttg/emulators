@@ -1,4 +1,4 @@
-# Script to create a QoS Policy that applies to all traffic with DSCP Value = 20 and Throttle Rate = 500 Kbps
+# Script to create a QoS Policy that applies to all traffic with DSCP Value = 40 and Throttle Rate = 600 Kbps
 
 # Define the policy name
 $policyName = "LimitBandwidthAllApps"
@@ -12,11 +12,11 @@ if (Get-NetQosPolicy -PolicyStore ActiveStore -Name $policyName -ErrorAction Sil
 # Create a new QoS Policy
 New-NetQosPolicy -Name $policyName `
                  -PolicyStore ActiveStore `
-                 -ThrottleRateActionBitsPerSecond 500000 `
-                 -DSCPAction 20 `
+                 -ThrottleRateActionBitsPerSecond 600000 `
+                 -DSCPAction 40 `
                  -NetworkProfile All
 
-Write-Output "New QoS Policy created: $policyName with DSCP Value = 20 and Throttle Rate = 500 Kbps"
+Write-Output "New QoS Policy created: $policyName with DSCP Value = 40 and Throttle Rate = 600 Kbps"
 
 # Define the path to the "anime" directory based on the current user's Desktop
 $animeDir = "C:\Users\$env:USERNAME\Desktop\anime"
