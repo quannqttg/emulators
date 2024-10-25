@@ -1,4 +1,5 @@
 
+
 @echo off
 setlocal
 
@@ -26,7 +27,8 @@ set "runresetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/ma
 set "runresetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\run_reset_network.ps1"
 set "resetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/reset_network.bat"
 set "resetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\reset_network.bat"
-
+set "createQOSUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/createqospolicy.bat"
+set "createQOSPath=C:\Users\%USERNAME%\Desktop\anime\createqospolicy.bat"
 
 
 
@@ -48,7 +50,8 @@ echo 4. Set Google DNS
 echo 5. Set Cloudflare DNS
 echo 6. Set Open DNS
 echo 7. Reset Network
-echo 8. Exit
+echo 8. Create QOS
+echo 9. Exit
 echo =======================
 echo.
 
@@ -61,11 +64,12 @@ echo 4. Set Google DNS >> "%logFile%"
 echo 5. Set Cloudflare DNS >> "%logFile%"
 echo 6. Set Open DNS >> "%logFile%"
 echo 7. Reset Network >> "%logFile%"
-echo 8. Exit >> "%logFile%"
+echo 8. Create QOS >> "%logFile%"
+echo 9. Exit >> "%logFile%"
 echo ======================= >> "%logFile%"
 echo. >> "%logFile%"
 
-set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, or 8 to exit): "
+set /p choice="Choose an option (1, 2, 3, 4, 5, 6, 7, 8 or 9 to exit): "
 
 :: Handle user choice
 if "%choice%"=="1" (
@@ -323,9 +327,35 @@ if errorlevel 1 (
         echo reset_network.bat has been deleted. >> "%logFile%"
     )
 )
-
 goto menu
 ) else if "%choice%"=="8" (
+    echo Downloading createqospolicy.bat... >> "%logFile%"
+    
+    :: Download createqospolicy.bat
+    curl -L -o "%createQOSPath%" "%createQOSUrl%"
+    
+    :: Check if the file was downloaded successfully
+    if errorlevel 1 (
+        echo Unable to download createqospolicy.bat. >> "%logFile%"
+    ) else (
+        echo open_createqospolicy.bat downloaded successfully: %createQOSPath% >> "%logFile%"
+        echo. >> "%logFile%"
+        
+        :: Run createqospolicy.bat in a new window and wait for it to close
+        echo Running createqospolicy.bat in a new window... >> "%logFile%"
+        start "" /wait cmd /c "%createQOSPath%"
+        
+        :: After the script finishes, delete the file
+        echo Deleting createqospolicy.bat... >> "%logFile%"
+        del "%createQOSPath%"
+        if errorlevel 1 (
+            echo Unable to delete createqospolicy.bat. >> "%logFile%"
+        ) else (
+            echo createqospolicy.bat has been deleted. >> "%logFile%"
+        )
+    )
+    goto menu
+) else if "%choice%"=="9" (
     echo Exiting the script. >> "%logFile%"
     exit /b
 ) else (
