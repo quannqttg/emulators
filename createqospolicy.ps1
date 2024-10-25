@@ -1,4 +1,4 @@
-# Script to create a QoS Policy that applies to all traffic with DSCP Value = 40 and Throttle Rate = 600 Kbps
+# Script to create a QoS Policy that applies to all traffic with DSCP Value = 40 and Throttle Rate = 800000000 Mb
 
 # Define the policy name
 $policyName = "LimitBandwidthAllApps"
@@ -12,7 +12,7 @@ if (Get-NetQosPolicy -PolicyStore ActiveStore -Name $policyName -ErrorAction Sil
 # Create a new QoS Policy
 New-NetQosPolicy -Name $policyName `
                  -PolicyStore ActiveStore `
-                 -ThrottleRateActionBitsPerSecond 600000 `
+                 -ThrottleRateActionBitsPerSecond 800000000`
                  -DSCPAction 40 `
                  -NetworkProfile All
 
