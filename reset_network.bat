@@ -92,4 +92,81 @@ if %errorlevel% neq 0 (
     echo Successfully flushed ARP cache. >> "%logFile%"
 )
 
+REM Step 10: Reset TCP/IP stack
+echo Resetting TCP/IP stack at %date% %time%... >> "%logFile%"
+netsh int ip reset
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to reset TCP/IP stack. >> "%logFile%"
+) else (
+    echo Successfully reset TCP/IP stack. >> "%logFile%"
+)
+
+REM Step 11: Clear SSL state
+echo Clearing SSL state at %date% %time%... >> "%logFile%"
+certutil -URLCache * delete
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to clear SSL state. >> "%logFile%"
+) else (
+    echo Successfully cleared SSL state. >> "%logFile%"
+)
+
+REM Step 12: Reset Internet Explorer settings
+echo Resetting Internet Explorer settings at %date% %time%... >> "%logFile%"
+rundll32.exe inetcpl.cpl,ResetIEtoDefaults
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to reset Internet Explorer settings. >> "%logFile%"
+) else (
+    echo Successfully reset Internet Explorer settings. >> "%logFile%"
+)
+
+REM Step 13: Clear NetBIOS cache
+echo Clearing NetBIOS cache at %date% %time%... >> "%logFile%"
+nbtstat -R
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to clear NetBIOS cache. >> "%logFile%"
+) else (
+    echo Successfully cleared NetBIOS cache. >> "%logFile%"
+)
+
+REM Step 14: Reset firewall to default settings
+echo Resetting firewall to default settings at %date% %time%... >> "%logFile%"
+netsh advfirewall reset
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to reset firewall to default settings. >> "%logFile%"
+) else (
+    echo Successfully reset firewall to default settings. >> "%logFile%"
+)
+
+REM Step 15: Disable and re-enable network adapters
+echo Disabling and re-enabling network adapters at %date% %time%... >> "%logFile%"
+for /f "skip=3 tokens=3*" %%i in ('netsh interface show interface') do (
+    netsh interface set interface "%%j" disabled
+    netsh interface set interface "%%j" enabled
+    echo Disabled and re-enabled network adapter: %%j >> "%logFile%"
+)
+
+REM Step 16: Clear routing table
+echo Clearing routing table at %date% %time%... >> "%logFile%"
+route -f
+if %errorlevel% neq 0 (
+    echo [ERROR] Failed to clear routing table. >> "%logFile%"
+) else (
+    echo Successfully cleared routing table. >> "%logFile%"
+)
+
+REM Step 17: Restart network-related services
+echo Restarting network-related services at %date% %time%... >> "%logFile%"
+net stop dnscache >> "%logFile%" 2>&1
+net start dnscache >> "%logFile%" 2>&1
+net stop dhcp >> "%logFile%" 2>&1
+net start dhcp >> "%logFile%" 2>&1
+net stop nla >> "%logFile%" 2>&1
+net start nla >> "%logFile%" 2>&1
+
 echo Network optimization completed at %date% %time%. >> "%logFile%"
+echo All steps completed successfully. Initiating system restart... >> "%logFile%"
+echo The system will restart in 10 seconds. Please save your work.
+timeout /t 10
+
+REM Force restart the PC
+shutdown /r /f /t 0
