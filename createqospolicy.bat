@@ -55,6 +55,10 @@ if "%choice%"=="1" (
     del "%setcreateqospolicy.ps1Path%"
     echo [DEBUG] Deleted createqospolicy.ps1.
     
+    REM Run gpupdate
+    gpupdate /force
+    echo [DEBUG] Group Policy updated.
+    
     pause
     goto MENU
 ) else if "%choice%"=="2" (
@@ -85,6 +89,10 @@ if "%choice%"=="1" (
     REM Delete the downloaded file
     del "%setdeleteallqos.ps1Path%"
     echo [DEBUG] Deleted deleteallqos.ps1.
+    
+    REM Run gpupdate
+    gpupdate /force
+    echo [DEBUG] Group Policy updated.
     
     pause
     goto MENU
