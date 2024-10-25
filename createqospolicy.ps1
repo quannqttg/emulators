@@ -1,7 +1,21 @@
-# Script to create a QoS Policy that applies to all traffic with DSCP Value = 40 and Throttle Rate = 800000000 Mb
+# Define the QoS Policy name
+$policyName = "MyQoSPolicy"
 
-# Define the policy name
-$policyName = "LimitBandwidthAllApps"
+# Function to get the user's desired throttle rate in Mbps
+function Get-UserThrottleRate {
+    $input = Read-Host "Enter the desired throttle rate in Mbps"
+    
+    # Validate the input to ensure it's a positive number
+    if ($input -as [int] -and [int]$input -gt 0) {
+        return [int]$input * 1MB  # Convert Mbps to bits per second
+    } else {
+        Write-Output "Invalid input. Please enter a positive number."
+        exit
+    }
+}
+
+# Get the user's desired throttle rate
+$throttleRate = Get-UserThrottleRate
 
 # Check if the policy already exists, and if so, remove it before creating a new one
 if (Get-NetQosPolicy -PolicyStore ActiveStore -Name $policyName -ErrorAction SilentlyContinue) {
@@ -9,18 +23,15 @@ if (Get-NetQosPolicy -PolicyStore ActiveStore -Name $policyName -ErrorAction Sil
     Write-Output "Old policy removed: $policyName"
 }
 
-# Create a new QoS Policy
+# Create a new QoS Policy with the specified throttle rate
 New-NetQosPolicy -Name $policyName `
                  -PolicyStore ActiveStore `
-                 -ThrottleRateActionBitsPerSecond 800000000`
+                 -ThrottleRateActionBitsPerSecond $throttleRate ` 
                  -DSCPAction 40 `
                  -NetworkProfile All
 
-Write-Output "New QoS Policy created: $policyName with DSCP Value = 40 and Throttle Rate = 600 Kbps"
-
-# Define the path to the "anime" directory based on the current user's Desktop
-$animeDir = "C:\Users\$env:USERNAME\Desktop\anime"
-
-# Set the path to the batch file in the "anime" directory
-$batchFile = "$animeDir\createqospolicy.bat"
-Write-Output "Batch file path set to: $batchFile"
+# Output the details of the new QoS Policy created
+Write-Output "New QoS Policy created: $policyName"
+Write-Output "   DSCP Value: 40"
+Write-Output "   Throttle Rate: $($throttleRate / 1MB) Mbps"  # Display throttle rate in Mbps
+Write-Output "   Policy Store: ActiveStore"
