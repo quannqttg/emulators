@@ -110,16 +110,7 @@ if %errorlevel% neq 0 (
     echo Successfully cleared SSL state. >> "%logFile%"
 )
 
-REM Step 12: Reset Internet Explorer settings
-echo Resetting Internet Explorer settings at %date% %time%... >> "%logFile%"
-rundll32.exe inetcpl.cpl,ResetIEtoDefaults
-if %errorlevel% neq 0 (
-    echo [ERROR] Failed to reset Internet Explorer settings. >> "%logFile%"
-) else (
-    echo Successfully reset Internet Explorer settings. >> "%logFile%"
-)
-
-REM Step 13: Clear NetBIOS cache
+REM Step 12: Clear NetBIOS cache
 echo Clearing NetBIOS cache at %date% %time%... >> "%logFile%"
 nbtstat -R
 if %errorlevel% neq 0 (
@@ -128,7 +119,7 @@ if %errorlevel% neq 0 (
     echo Successfully cleared NetBIOS cache. >> "%logFile%"
 )
 
-REM Step 14: Reset firewall to default settings
+REM Step 13: Reset firewall to default settings
 echo Resetting firewall to default settings at %date% %time%... >> "%logFile%"
 netsh advfirewall reset
 if %errorlevel% neq 0 (
@@ -137,7 +128,7 @@ if %errorlevel% neq 0 (
     echo Successfully reset firewall to default settings. >> "%logFile%"
 )
 
-REM Step 15: Disable and re-enable network adapters
+REM Step 14: Disable and re-enable network adapters
 echo Disabling and re-enabling network adapters at %date% %time%... >> "%logFile%"
 for /f "skip=3 tokens=3*" %%i in ('netsh interface show interface') do (
     netsh interface set interface "%%j" disabled
@@ -145,7 +136,7 @@ for /f "skip=3 tokens=3*" %%i in ('netsh interface show interface') do (
     echo Disabled and re-enabled network adapter: %%j >> "%logFile%"
 )
 
-REM Step 16: Clear routing table
+REM Step 15: Clear routing table
 echo Clearing routing table at %date% %time%... >> "%logFile%"
 route -f
 if %errorlevel% neq 0 (
@@ -154,13 +145,13 @@ if %errorlevel% neq 0 (
     echo Successfully cleared routing table. >> "%logFile%"
 )
 
-REM Step 17: Restart network-related services
+REM Step 16: Restart network-related services
 echo Restarting network-related services at %date% %time%... >> "%logFile%"
-net stop dnscache >> "%logFile%" 2>&1
+echo Y | net stop dnscache >> "%logFile%" 2>&1
 net start dnscache >> "%logFile%" 2>&1
-net stop dhcp >> "%logFile%" 2>&1
+echo Y | net stop dhcp >> "%logFile%" 2>&1
 net start dhcp >> "%logFile%" 2>&1
-net stop nla >> "%logFile%" 2>&1
+echo Y | net stop nla >> "%logFile%" 2>&1
 net start nla >> "%logFile%" 2>&1
 
 echo Network optimization completed at %date% %time%. >> "%logFile%"
