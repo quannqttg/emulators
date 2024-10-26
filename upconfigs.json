@@ -15,7 +15,7 @@
         "min_low_players": 0,
         "max_low_players": 5
     },
-    "login_delay": 15,
+    "login_delay": 20,
     "auto_reclone_when_high_disk": false,
     "high_disk_threshold": 0,
     "auto_bypass_key": false,
