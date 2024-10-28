@@ -28,12 +28,21 @@ def get_process_bandwidth(proc: psutil.Process) -> int:
         logging.error(f"Error getting bandwidth: {e}")
         return 0
 
+def check_qos_policy_exists() -> bool:
+    try:
+        command = f'powershell -Command "Get-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -ErrorAction SilentlyContinue"'
+        result = subprocess.run(command, shell=True, capture_output=True, text=True)
+        return QOS_POLICY_NAME in result.stdout
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed to check QoS policy: {e}")
+        return False
+
 def apply_qos_policy(bandwidth_mb: int):
     try:
-        # Remove existing policy if it exists
-        remove_qos_policy()
-        
-        # Create new QoS policy
+        if check_qos_policy_exists():
+            logging.info("QoS policy already exists. Skipping creation.")
+            return
+
         command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}"'
         subprocess.run(command, shell=True, check=True)
         logging.info(f"QoS policy with {bandwidth_mb} MB limit applied.")
@@ -42,6 +51,10 @@ def apply_qos_policy(bandwidth_mb: int):
 
 def remove_qos_policy():
     try:
+        if not check_qos_policy_exists():
+            logging.info("QoS policy doesn't exist. Skipping removal.")
+            return
+
         command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false"'
         subprocess.run(command, shell=True, check=True)
         logging.info("QoS policy removed.")
@@ -57,29 +70,31 @@ def main():
     logging.info(f"Monitoring {PROCESS_NAME} with PID: {proc.pid}")
 
     try:
-        previous_usage = 0
+        policy_applied = False
         while True:
             current_usage = get_process_bandwidth(proc)
             usage_mb = current_usage / (1024 * 1024)
 
-            if current_usage > LIMIT_BYTES:
+            if current_usage > LIMIT_BYTES and not policy_applied:
                 logging.warning(f"Current usage: {usage_mb:.2f} MB exceeds limit. Applying QoS policy.")
                 apply_qos_policy(LIMIT_MB)
+                policy_applied = True
+            elif current_usage <= LIMIT_BYTES and policy_applied:
+                logging.info(f"Current usage: {usage_mb:.2f} MB is within the limit. Removing QoS policy.")
+                remove_qos_policy()
+                policy_applied = False
             else:
-                logging.info(f"Current usage: {usage_mb:.2f} MB is within the limit.")
-                if previous_usage > LIMIT_BYTES:
-                    remove_qos_policy()
+                logging.info(f"Current usage: {usage_mb:.2f} MB. No action needed.")
 
-            previous_usage = current_usage
             time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
         logging.info("Monitoring stopped by user.")
-        remove_qos_policy()
     except Exception as e:
         logging.exception(f"An unexpected error occurred: {e}")
     finally:
-        remove_qos_policy()
+        if policy_applied:
+            remove_qos_policy()
 
 if __name__ == '__main__':
     main()
