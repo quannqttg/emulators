@@ -62,16 +62,11 @@ def main():
         last_check_time = time.time()
         
         while True:
-            time.sleep(CHECK_INTERVAL)
             
             current_time = time.time()
-            elapsed_time = current_time - last_check_time
+            elapsed_time = max(current_time - last_check_time, 0.001)  # Ensure minimum time difference
             current_usage = get_process_bandwidth(proc)
-            
-            if elapsed_time > 0:
-                bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
-            else:
-                bandwidth = 0  # Avoid division by zero
+            bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
             
             if bandwidth > LIMIT_MB / 8 and not policy_applied:  # Convert MB to MB/s
                 logging.warning(f"Current bandwidth: {bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
@@ -86,6 +81,7 @@ def main():
 
             initial_usage = current_usage
             last_check_time = current_time
+            time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
         logging.info("Monitoring stopped by user.")
