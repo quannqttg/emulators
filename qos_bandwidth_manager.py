@@ -73,7 +73,7 @@ def main():
         current_readings = [get_process_bandwidth(proc) for proc in processes]
         total_bandwidth = 0
         
-        for (initial_read, initial_write), (current_read, current_write) in zip(initial_readings, current_readings):
+        for proc, (initial_read, initial_write), (current_read, current_write) in zip(processes, initial_readings, current_readings):
             read_bandwidth = (current_read - initial_read) / elapsed_time / 1024 / 1024
             write_bandwidth = (current_write - initial_write) / elapsed_time / 1024 / 1024
             total_bandwidth += (read_bandwidth + write_bandwidth)
