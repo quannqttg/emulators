@@ -28,21 +28,13 @@ def get_process_bandwidth(proc: psutil.Process) -> int:
         logging.error(f"Error getting bandwidth: {e}")
         return 0
 
-def check_qos_policy_exists() -> bool:
-    try:
-        command = f'powershell -Command "Get-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -ErrorAction SilentlyContinue"'
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        return QOS_POLICY_NAME in result.stdout
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Failed to check QoS policy: {e}")
-        return False
-
 def apply_qos_policy(bandwidth_mb: int):
     try:
-        if check_qos_policy_exists():
-            remove_qos_policy()
-
-        command = f'powershell -Command "$policy = New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}; $filter = New-NetQosTrafficClass -NetworkProfile All -PolicyStore ActiveStore -Name \'{QOS_POLICY_NAME}_Filter\' -Priority 1 -NetQosPolicy $policy; $filter | Set-NetQosTrafficClass -NetworkProfile All -PolicyStore ActiveStore -Priority 1 -Algorithm Strict -BandwidthPercentage 100"'
+        # Remove existing policy if it exists
+        remove_qos_policy()
+        
+        # Create new QoS policy
+        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}"'
         subprocess.run(command, shell=True, check=True)
         logging.info(f"QoS policy with {bandwidth_mb} MB limit applied.")
     except subprocess.CalledProcessError as e:
@@ -50,10 +42,9 @@ def apply_qos_policy(bandwidth_mb: int):
 
 def remove_qos_policy():
     try:
-        if check_qos_policy_exists():
-            command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false; Remove-NetQosTrafficClass -Name \'{QOS_POLICY_NAME}_Filter\' -Confirm:$false"'
-            subprocess.run(command, shell=True, check=True)
-            logging.info("QoS policy removed.")
+        command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false"'
+        subprocess.run(command, shell=True, check=True)
+        logging.info("QoS policy removed.")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed to remove QoS policy: {e}")
 
@@ -71,11 +62,17 @@ def main():
         last_check_time = time.time()
         
         while True:
+            time.sleep(CHECK_INTERVAL)
+            
             current_time = time.time()
             elapsed_time = current_time - last_check_time
             current_usage = get_process_bandwidth(proc)
-            bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
-
+            
+            if elapsed_time > 0:
+                bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
+            else:
+                bandwidth = 0  # Avoid division by zero
+            
             if bandwidth > LIMIT_MB / 8 and not policy_applied:  # Convert MB to MB/s
                 logging.warning(f"Current bandwidth: {bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
                 apply_qos_policy(LIMIT_MB)
@@ -89,7 +86,6 @@ def main():
 
             initial_usage = current_usage
             last_check_time = current_time
-            time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
         logging.info("Monitoring stopped by user.")
