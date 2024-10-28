@@ -5,7 +5,7 @@ import logging
 from typing import Optional
 
 # Constants
-PROCESS_NAME = 'MuMuVMMHeadless.exe'
+PROCESS_NAMES = ['MuMuVMMHeadless.exe', 'MuMuPlayer.exe']  # List of process names to monitor
 LIMIT_MB = 300
 LIMIT_BYTES = LIMIT_MB * 1024 * 1024
 CHECK_INTERVAL = 5  # seconds
@@ -13,13 +13,6 @@ QOS_POLICY_NAME = "BandwidthLimitPolicy"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-def find_process_by_name(name: str) -> Optional[psutil.Process]:
-    """Find a process by its name."""
-    for proc in psutil.process_iter(['name']):
-        if proc.info['name'] == name:
-            return proc
-    return None
 
 def get_process_bandwidth(proc: psutil.Process) -> tuple[int, int]:
     """Get the read and write bandwidth of a process."""
@@ -37,7 +30,7 @@ def apply_qos_policy(bandwidth_mb: int):
         remove_qos_policy()
         
         # Create new QoS policy
-        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}"'
+        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAMES[0]}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}"'
         subprocess.run(command, shell=True, check=True)
         logging.info(f"QoS policy with {bandwidth_mb} MB limit applied.")
     except subprocess.CalledProcessError as e:
@@ -54,14 +47,14 @@ def remove_qos_policy():
 
 def main():
     while True:
-        # Find all processes with the name PROCESS_NAME
-        processes = [proc for proc in psutil.process_iter(['name']) if proc.info['name'] == PROCESS_NAME]
+        # Find all processes with the names in PROCESS_NAMES
+        processes = [proc for proc in psutil.process_iter(['name']) if proc.info['name'] in PROCESS_NAMES]
         if not processes:
-            logging.error(f"{PROCESS_NAME} is not running.")
+            logging.error(f"None of the processes {PROCESS_NAMES} are running.")
             time.sleep(CHECK_INTERVAL)
             continue  # Go back to the start of the loop to check again
 
-        logging.info(f"Monitoring {len(processes)} instance(s) of {PROCESS_NAME}.")
+        logging.info(f"Monitoring {len(processes)} instance(s) of {', '.join(PROCESS_NAMES)}.")
 
         try:
             policy_applied = False
@@ -74,7 +67,7 @@ def main():
                 # Check if any processes are still running
                 processes = [proc for proc in processes if psutil.pid_exists(proc.pid)]
                 if not processes:
-                    logging.error(f"No instances of {PROCESS_NAME} are running. Exiting.")
+                    logging.error(f"No instances of {', '.join(PROCESS_NAMES)} are running. Exiting.")
                     break
 
                 current_time = time.time()
