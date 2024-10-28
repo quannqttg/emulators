@@ -40,9 +40,9 @@ def check_qos_policy_exists() -> bool:
 def apply_qos_policy(bandwidth_mb: int):
     try:
         if check_qos_policy_exists():
-            remove_qos_policy()  # Remove existing policy before creating a new one
+            remove_qos_policy()
 
-        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000} -IPProtocol Both -IPSrcPortStart 0 -IPSrcPortEnd 65535 -IPDstPortStart 0 -IPDstPortEnd 65535"'
+        command = f'powershell -Command "$policy = New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}; $filter = New-NetQosTrafficClass -NetworkProfile All -PolicyStore ActiveStore -Name \'{QOS_POLICY_NAME}_Filter\' -Priority 1 -NetQosPolicy $policy; $filter | Set-NetQosTrafficClass -NetworkProfile All -PolicyStore ActiveStore -Priority 1 -Algorithm Strict -BandwidthPercentage 100"'
         subprocess.run(command, shell=True, check=True)
         logging.info(f"QoS policy with {bandwidth_mb} MB limit applied.")
     except subprocess.CalledProcessError as e:
@@ -51,7 +51,7 @@ def apply_qos_policy(bandwidth_mb: int):
 def remove_qos_policy():
     try:
         if check_qos_policy_exists():
-            command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false"'
+            command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false; Remove-NetQosTrafficClass -Name \'{QOS_POLICY_NAME}_Filter\' -Confirm:$false"'
             subprocess.run(command, shell=True, check=True)
             logging.info("QoS policy removed.")
     except subprocess.CalledProcessError as e:
@@ -68,21 +68,27 @@ def main():
     try:
         policy_applied = False
         initial_usage = get_process_bandwidth(proc)
+        last_check_time = time.time()
+        
         while True:
-            current_usage = get_process_bandwidth(proc) - initial_usage
-            usage_mb = current_usage / (1024 * 1024)
+            current_time = time.time()
+            elapsed_time = current_time - last_check_time
+            current_usage = get_process_bandwidth(proc)
+            bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
 
-            if current_usage > LIMIT_BYTES and not policy_applied:
-                logging.warning(f"Current usage: {usage_mb:.2f} MB exceeds limit. Applying QoS policy.")
+            if bandwidth > LIMIT_MB / 8 and not policy_applied:  # Convert MB to MB/s
+                logging.warning(f"Current bandwidth: {bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
                 apply_qos_policy(LIMIT_MB)
                 policy_applied = True
-            elif current_usage <= LIMIT_BYTES and policy_applied:
-                logging.info(f"Current usage: {usage_mb:.2f} MB is within the limit. Removing QoS policy.")
+            elif bandwidth <= LIMIT_MB / 8 and policy_applied:
+                logging.info(f"Current bandwidth: {bandwidth:.2f} MB/s is within the limit. Removing QoS policy.")
                 remove_qos_policy()
                 policy_applied = False
             else:
-                logging.info(f"Current usage: {usage_mb:.2f} MB. No action needed.")
+                logging.info(f"Current bandwidth: {bandwidth:.2f} MB/s. No action needed.")
 
+            initial_usage = current_usage
+            last_check_time = current_time
             time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
