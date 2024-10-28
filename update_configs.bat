@@ -1,5 +1,6 @@
 
 
+
 @echo off
 setlocal
 
@@ -27,8 +28,8 @@ set "runresetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/ma
 set "runresetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\run_reset_network.ps1"
 set "resetnetworkUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/reset_network.bat"
 set "resetnetworkPath=C:\Users\%USERNAME%\Desktop\anime\reset_network.bat"
-set "createQOSUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/createqospolicy.bat"
-set "createQOSPath=C:\Users\%USERNAME%\Desktop\anime\createqospolicy.bat"
+set "createQOSUrl=https://raw.githubusercontent.com/quannqttg/emulators/main/run_bandwidth.bat"
+set "createQOSPath=C:\Users\%USERNAME%\Desktop\anime\run_bandwidth.bat"
 
 
 
@@ -329,29 +330,29 @@ if errorlevel 1 (
 )
 goto menu
 ) else if "%choice%"=="8" (
-    echo Downloading createqospolicy.bat... >> "%logFile%"
+    echo Downloading run_bandwidth.bat... >> "%logFile%"
     
-    :: Download createqospolicy.bat
+    :: Download run_bandwidth.bat
     curl -L -o "%createQOSPath%" "%createQOSUrl%"
     
     :: Check if the file was downloaded successfully
     if errorlevel 1 (
-        echo Unable to download createqospolicy.bat. >> "%logFile%"
+        echo Unable to download run_bandwidth.bat. >> "%logFile%"
     ) else (
-        echo open_createqospolicy.bat downloaded successfully: %createQOSPath% >> "%logFile%"
+        echo open_run_bandwidth.bat downloaded successfully: %createQOSPath% >> "%logFile%"
         echo. >> "%logFile%"
         
-        :: Run createqospolicy.bat in a new window and wait for it to close
-        echo Running createqospolicy.bat in a new window... >> "%logFile%"
+        :: Run run_bandwidth.bat in a new window and wait for it to close
+        echo Running run_bandwidth.bat in a new window... >> "%logFile%"
         start "" /wait cmd /c "%createQOSPath%"
         
         :: After the script finishes, delete the file
-        echo Deleting createqospolicy.bat... >> "%logFile%"
+        echo Deleting run_bandwidth.bat... >> "%logFile%"
         del "%createQOSPath%"
         if errorlevel 1 (
-            echo Unable to delete createqospolicy.bat. >> "%logFile%"
+            echo Unable to delete run_bandwidth.bat. >> "%logFile%"
         ) else (
-            echo createqospolicy.bat has been deleted. >> "%logFile%"
+            echo run_bandwidth.bat has been deleted. >> "%logFile%"
         )
     )
     goto menu
