@@ -50,48 +50,61 @@ def remove_qos_policy():
         logging.error(f"Failed to remove QoS policy: {e}")
 
 def main():
-    proc = find_process_by_name(PROCESS_NAME)
-    if not proc:
+    processes = [proc for proc in psutil.process_iter(['name']) if proc.info['name'] == PROCESS_NAME]
+    if not processes:
         logging.error(f"{PROCESS_NAME} is not running.")
         return
 
-    logging.info(f"Monitoring {PROCESS_NAME} with PID: {proc.pid}")
+    logging.info(f"Monitoring {len(processes)} instance(s) of {PROCESS_NAME}.")
 
     try:
         policy_applied = False
-        initial_read, initial_write = get_process_bandwidth(proc)
+        initial_readings = [get_process_bandwidth(proc) for proc in processes]
         last_check_time = time.time()
-        
+
         while True:
             time.sleep(CHECK_INTERVAL)
-            
-            if not psutil.pid_exists(proc.pid):
-                logging.error(f"{PROCESS_NAME} is no longer running. Exiting.")
+
+            # Check if any processes are still running
+            processes = [proc for proc in processes if psutil.pid_exists(proc.pid)]
+            if not processes:
+                logging.error(f"No instances of {PROCESS_NAME} are running. Exiting.")
                 break
-            
+
             current_time = time.time()
             elapsed_time = current_time - last_check_time
-            current_read, current_write = get_process_bandwidth(proc)
+
+            current_readings = [get_process_bandwidth(proc) for proc in processes]
+            read_bandwidths = []
+            write_bandwidths = []
+            total_bandwidth = 0
             
-            if elapsed_time > 0:
+            for (initial_read, initial_write), (current_read, current_write) in zip(initial_readings, current_readings):
                 read_bandwidth = (current_read - initial_read) / elapsed_time / 1024 / 1024  # MB/s
                 write_bandwidth = (current_write - initial_write) / elapsed_time / 1024 / 1024  # MB/s
-                total_bandwidth = read_bandwidth + write_bandwidth
-            else:
-                read_bandwidth = write_bandwidth = total_bandwidth = 0
-            
-            logging.info(f"Read: {read_bandwidth:.2f} MB/s, Write: {write_bandwidth:.2f} MB/s, Total: {total_bandwidth:.2f} MB/s")
-            
-            if total_bandwidth > LIMIT_MB / 8 and not policy_applied:
-                logging.warning(f"Current bandwidth: {total_bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
+                total_bandwidth += (read_bandwidth + write_bandwidth)
+
+                read_bandwidths.append(read_bandwidth)
+                write_bandwidths.append(write_bandwidth)
+
+                logging.info(f"Instance PID: {proc.pid} - Read: {read_bandwidth:.2f} MB/s, Write: {write_bandwidth:.2f} MB/s")
+
+            # Average total bandwidth across all instances
+            average_bandwidth = total_bandwidth / len(processes)
+            logging.info(f"Average Total Bandwidth: {average_bandwidth:.2f} MB/s")
+
+            # QoS policy logic
+            if average_bandwidth > LIMIT_MB / 8 and not policy_applied:
+                logging.warning(f"Average bandwidth: {average_bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
                 apply_qos_policy(LIMIT_MB)
                 policy_applied = True
-            elif total_bandwidth <= LIMIT_MB / 8 and policy_applied:
-                logging.info(f"Current bandwidth: {total_bandwidth:.2f} MB/s is within the limit. Removing QoS policy.")
+            elif average_bandwidth <= LIMIT_MB / 8 and policy_applied:
+                logging.info(f"Average bandwidth: {average_bandwidth:.2f} MB/s is within the limit. Removing QoS policy.")
                 remove_qos_policy()
                 policy_applied = False
 
-            initial_read, initial_write = current_read, current_write
+            # Update initial readings for next loop
+            initial_readings = current_readings
             last_check_time = current_time
 
     except KeyboardInterrupt:
@@ -101,18 +114,3 @@ def main():
     finally:
         if policy_applied:
             remove_qos_policy()
-
-# Set up logging to both console and file
-log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-log_file = 'bandwidth_monitor.log'
-file_handler = logging.FileHandler(log_file)
-file_handler.setFormatter(log_formatter)
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setFormatter(log_formatter)
-logging.getLogger().addHandler(file_handler)
-logging.getLogger().addHandler(console_handler)
-
-if __name__ == '__main__':
-    main()
-
-print("Script execution completed.")
