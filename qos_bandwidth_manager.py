@@ -2,6 +2,7 @@ import psutil
 import time
 import subprocess
 import logging
+import sys
 from typing import Optional
 
 # Constants
@@ -62,11 +63,16 @@ def main():
         last_check_time = time.time()
         
         while True:
+            time.sleep(CHECK_INTERVAL)
             
             current_time = time.time()
-            elapsed_time = max(current_time - last_check_time, 0.001)  # Ensure minimum time difference
+            elapsed_time = current_time - last_check_time
             current_usage = get_process_bandwidth(proc)
-            bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
+            
+            if elapsed_time > 0:
+                bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
+            else:
+                bandwidth = 0  # Set bandwidth to 0 if elapsed_time is 0
             
             if bandwidth > LIMIT_MB / 8 and not policy_applied:  # Convert MB to MB/s
                 logging.warning(f"Current bandwidth: {bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
@@ -81,7 +87,6 @@ def main():
 
             initial_usage = current_usage
             last_check_time = current_time
-            time.sleep(CHECK_INTERVAL)
 
     except KeyboardInterrupt:
         logging.info("Monitoring stopped by user.")
@@ -90,6 +95,16 @@ def main():
     finally:
         if policy_applied:
             remove_qos_policy()
+
+# Set up logging to both console and file
+log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+log_file = 'bandwidth_monitor.log'
+file_handler = logging.FileHandler(log_file)
+file_handler.setFormatter(log_formatter)
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+logging.getLogger().addHandler(file_handler)
+logging.getLogger().addHandler(console_handler)
 
 if __name__ == '__main__':
     main()
