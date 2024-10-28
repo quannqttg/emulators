@@ -67,19 +67,30 @@ if !errorlevel! neq 0 (
     goto :Menu
 )
 
-:: Download qos_bandwidth_manager.py if it doesn't exist
+:: Set the path for qos_bandwidth_manager.py
 set "bandwidthScript=C:\Users\%USERNAME%\Desktop\anime\qos_bandwidth_manager.py"
 
-if not exist "!bandwidthScript!" (
-    echo Downloading qos_bandwidth_manager.py... >> "!logFile!"
-    curl -L -o "!bandwidthScript!" https://github.com/quannqttg/emulators/raw/main/qos_bandwidth_manager.py
+:: Check if qos_bandwidth_manager.py exists and delete it before downloading
+if exist "!bandwidthScript!" (
+    echo Deleting existing qos_bandwidth_manager.py... >> "!logFile!"
+    del "!bandwidthScript!"
     if !errorlevel! neq 0 (
-        echo Failed to download qos_bandwidth_manager.py. >> "!logFile!"
+        echo Failed to delete qos_bandwidth_manager.py. Exiting... >> "!logFile!"
         pause
         goto :Menu
     )
-    echo qos_bandwidth_manager.py downloaded successfully. >> "!logFile!"
+    echo qos_bandwidth_manager.py deleted successfully. >> "!logFile!"
 )
+
+:: Download qos_bandwidth_manager.py
+echo Downloading qos_bandwidth_manager.py... >> "!logFile!"
+curl -L -o "!bandwidthScript!" https://github.com/quannqttg/emulators/raw/main/qos_bandwidth_manager.py
+if !errorlevel! neq 0 (
+    echo Failed to download qos_bandwidth_manager.py. >> "!logFile!"
+    pause
+    goto :Menu
+)
+echo qos_bandwidth_manager.py downloaded successfully. >> "!logFile!"
 
 :: Run qos_bandwidth_manager.py in a new window with a title
 start "Running Bandwidth Monitor" cmd /k python "!bandwidthScript!"
