@@ -40,10 +40,9 @@ def check_qos_policy_exists() -> bool:
 def apply_qos_policy(bandwidth_mb: int):
     try:
         if check_qos_policy_exists():
-            logging.info("QoS policy already exists. Skipping creation.")
-            return
+            remove_qos_policy()  # Remove existing policy before creating a new one
 
-        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000}"'
+        command = f'powershell -Command "New-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -AppPathNameMatchCondition \'{PROCESS_NAME}\' -ThrottleRateActionBitsPerSecond {bandwidth_mb * 1000000} -IPProtocol Both -IPSrcPortStart 0 -IPSrcPortEnd 65535 -IPDstPortStart 0 -IPDstPortEnd 65535"'
         subprocess.run(command, shell=True, check=True)
         logging.info(f"QoS policy with {bandwidth_mb} MB limit applied.")
     except subprocess.CalledProcessError as e:
@@ -51,13 +50,10 @@ def apply_qos_policy(bandwidth_mb: int):
 
 def remove_qos_policy():
     try:
-        if not check_qos_policy_exists():
-            logging.info("QoS policy doesn't exist. Skipping removal.")
-            return
-
-        command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false"'
-        subprocess.run(command, shell=True, check=True)
-        logging.info("QoS policy removed.")
+        if check_qos_policy_exists():
+            command = f'powershell -Command "Remove-NetQosPolicy -Name \'{QOS_POLICY_NAME}\' -Confirm:$false"'
+            subprocess.run(command, shell=True, check=True)
+            logging.info("QoS policy removed.")
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed to remove QoS policy: {e}")
 
@@ -71,8 +67,9 @@ def main():
 
     try:
         policy_applied = False
+        initial_usage = get_process_bandwidth(proc)
         while True:
-            current_usage = get_process_bandwidth(proc)
+            current_usage = get_process_bandwidth(proc) - initial_usage
             usage_mb = current_usage / (1024 * 1024)
 
             if current_usage > LIMIT_BYTES and not policy_applied:
