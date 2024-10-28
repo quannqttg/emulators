@@ -21,13 +21,13 @@ def find_process_by_name(name: str) -> Optional[psutil.Process]:
             return proc
     return None
 
-def get_process_bandwidth(proc: psutil.Process) -> int:
+def get_process_bandwidth(proc: psutil.Process) -> tuple[int, int]:
     try:
         io_counters = proc.io_counters()
-        return io_counters.read_bytes + io_counters.write_bytes
+        return io_counters.read_bytes, io_counters.write_bytes
     except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
         logging.error(f"Error getting bandwidth: {e}")
-        return 0
+        return 0, 0
 
 def apply_qos_policy(bandwidth_mb: int):
     try:
@@ -59,33 +59,39 @@ def main():
 
     try:
         policy_applied = False
-        initial_usage = get_process_bandwidth(proc)
+        initial_read, initial_write = get_process_bandwidth(proc)
         last_check_time = time.time()
         
         while True:
             time.sleep(CHECK_INTERVAL)
             
+            if not psutil.pid_exists(proc.pid):
+                logging.error(f"{PROCESS_NAME} is no longer running. Exiting.")
+                break
+            
             current_time = time.time()
             elapsed_time = current_time - last_check_time
-            current_usage = get_process_bandwidth(proc)
+            current_read, current_write = get_process_bandwidth(proc)
             
             if elapsed_time > 0:
-                bandwidth = (current_usage - initial_usage) / elapsed_time / 1024 / 1024  # MB/s
+                read_bandwidth = (current_read - initial_read) / elapsed_time / 1024 / 1024  # MB/s
+                write_bandwidth = (current_write - initial_write) / elapsed_time / 1024 / 1024  # MB/s
+                total_bandwidth = read_bandwidth + write_bandwidth
             else:
-                bandwidth = 0  # Set bandwidth to 0 if elapsed_time is 0
+                read_bandwidth = write_bandwidth = total_bandwidth = 0
             
-            if bandwidth > LIMIT_MB / 8 and not policy_applied:  # Convert MB to MB/s
-                logging.warning(f"Current bandwidth: {bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
+            logging.info(f"Read: {read_bandwidth:.2f} MB/s, Write: {write_bandwidth:.2f} MB/s, Total: {total_bandwidth:.2f} MB/s")
+            
+            if total_bandwidth > LIMIT_MB / 8 and not policy_applied:
+                logging.warning(f"Current bandwidth: {total_bandwidth:.2f} MB/s exceeds limit. Applying QoS policy.")
                 apply_qos_policy(LIMIT_MB)
                 policy_applied = True
-            elif bandwidth <= LIMIT_MB / 8 and policy_applied:
-                logging.info(f"Current bandwidth: {bandwidth:.2f} MB/s is within the limit. Removing QoS policy.")
+            elif total_bandwidth <= LIMIT_MB / 8 and policy_applied:
+                logging.info(f"Current bandwidth: {total_bandwidth:.2f} MB/s is within the limit. Removing QoS policy.")
                 remove_qos_policy()
                 policy_applied = False
-            else:
-                logging.info(f"Current bandwidth: {bandwidth:.2f} MB/s. No action needed.")
 
-            initial_usage = current_usage
+            initial_read, initial_write = current_read, current_write
             last_check_time = current_time
 
     except KeyboardInterrupt:
