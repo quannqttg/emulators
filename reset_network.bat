@@ -156,8 +156,8 @@ net start nla >> "%logFile%" 2>&1
 
 echo Network optimization completed at %date% %time%. >> "%logFile%"
 echo All steps completed successfully. Initiating system restart... >> "%logFile%"
-echo The system will restart in 10 seconds. Please save your work.
-timeout /t 10
+echo The system will restart in 20 seconds. Please save your work.
+timeout /t 20
 
 REM Force restart the PC
 shutdown /r /f /t 0
