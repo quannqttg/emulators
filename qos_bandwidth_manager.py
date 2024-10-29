@@ -10,7 +10,7 @@ from typing import List, Tuple, Dict
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Constants
-PROCESS_NAMES = ['MuMuVMMHeadless.exe', 'MuMuPlayer.exe']
+PROCESS_NAMES = ['MuMuVMMHeadless.exe', 'MuMuPlayer.exe', 'crashpad_handler']
 CHECK_INTERVAL = 5  # seconds
 QOS_POLICY_NAME = "BandwidthLimitPolicy"
 TOTAL_CORES = psutil.cpu_count(logical=False)
@@ -109,6 +109,14 @@ def monitor_bandwidth(limit_mb: int) -> None:
     policy_applied = False
     while True:
         processes = [proc for proc in psutil.process_iter(['name']) if proc.info['name'] in PROCESS_NAMES]
+        
+        # Close crashpad_handler process if running
+        for proc in processes:
+            if proc.info['name'] == 'crashpad_handler':
+                logging.info(f"Closing process {proc.info['name']} (PID: {proc.pid})")
+                proc.terminate()  # Close the process
+                continue
+        
         if not processes:
             logging.error(f"None of the processes {PROCESS_NAMES} are running.")
             time.sleep(CHECK_INTERVAL)
