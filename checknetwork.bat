@@ -43,20 +43,11 @@ REM Step 5: Reset Winsock
 echo Resetting Winsock at %date% %time% >> "%logFile%"
 netsh winsock reset
 
-REM Step 6: Reset IP Configuration
-echo Resetting IP configuration at %date% %time% >> "%logFile%"
-netsh int ip reset
-if errorlevel 1 (
-    echo [WARNING] IP reset failed. >> "%logFile%"
-) else (
-    echo IP reset successful. >> "%logFile%"
-)
-
-REM Step 7: Check WinHTTP Proxy Settings
+REM Step 6: Check WinHTTP Proxy Settings
 echo Checking WinHTTP proxy settings... >> "%logFile%"
 netsh winhttp show proxy | findstr "Direct" >> "%logFile%"
 
-REM Step 8: Flush ARP Cache
+REM Step 7: Flush ARP Cache
 echo Flushing ARP cache at %date% %time% >> "%logFile%"
 arp -d *
 
